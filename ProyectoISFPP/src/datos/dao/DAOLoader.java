@@ -2,8 +2,10 @@ package datos.dao;
 
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.util.Locale;
 import java.util.Properties;
 
+import datos.dao.bd.BdDAOFactory;
 import datos.dao.txt.TxtDAOFactory;
 
 //import logica.GeneradorUbicacion;
@@ -29,10 +31,34 @@ public class DAOLoader {
 		/*GeneradorUbicacion generador = new GeneradorUbicacion(numero(diccionario, "latitud1"),
 				numero(diccionario, "longitud1"), numero(diccionario, "latitud2"), numero(diccionario, "longitud2"));*/
 
+		 // Obtiene el tipo de persistencia configurado.
+        // Si no se indica, utiliza TXT por defecto.
+        String tipo = diccionario.getProperty("persistencia", "TXT")
+                .trim().toUpperCase(Locale.ROOT);
+        
+        switch (tipo) {
+
+        case "TXT":
+		
 		// Le pasa a la fabrica los nombres de los archivos txt
-		return new TxtDAOFactory(texto(diccionario, "servicio"), texto(diccionario, "vehiculo"),
+		return new TxtDAOFactory(texto(diccionario, "servicio"),
+				texto(diccionario, "vehiculo"),
 				texto(diccionario, "usuario") /*, generador*/);
-	}
+		
+        case "BD":
+            // Crea los DAO que trabajan con PostgreSQL
+            return new BdDAOFactory(
+                texto(diccionario, "bd.url"),
+                texto(diccionario, "bd.usuario"),
+                texto(diccionario, "bd.password")
+            );
+		
+        default:
+            throw new IllegalStateException(
+                "Tipo de persistencia no soportado: " + tipo);
+    }   
+            
+ }
 
 	private static Properties cargar(String archivo) {
 		Properties diccionario = new Properties(); // Creo un diccionario que almacena clave valor que se usara para que lea el archivo
