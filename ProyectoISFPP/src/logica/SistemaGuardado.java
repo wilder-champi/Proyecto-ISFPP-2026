@@ -109,7 +109,7 @@ public class SistemaGuardado {
 	public List<Usuario> getUsuarios() {
 		return usuarios;
 	}
-	
+	/*
 	// Pasa los usuarios del modelo a DTO y le pide al DAO que los escriba
 	public void guardarUsuarios() {
 		List<UsuarioDTO> dtos = new ArrayList<>();
@@ -127,16 +127,34 @@ public class SistemaGuardado {
 			dtos.add(new UsuarioDTO(u.getNombre(), u.getTelefono(), u.getEmail(), licencia, patentes));
 		}
 		fabrica.getUsuarioDAO().guardarTodos(dtos);
-	}
+	}*/
 
-	// Valida el email, agrega el usuario a la lista y lo guarda en el txt
+	// Valida el email, le pide al DAO que guarde el usuario y despues lo agrega a la lista
 	public void registrarUsuario(Usuario nuevo) {
-		for (Usuario u : usuarios) {
+		for (Usuario u : usuarios) {//recorre la lista de usuarios ya cargados para validar si el mails como es unico no se repita ya que no pueden haber dos usuarios con el mismo mail
 			if (u.getEmail().equalsIgnoreCase(nuevo.getEmail())) {
 				throw new IllegalArgumentException("Ya existe un usuario con ese email");
 			}
 		}
-		usuarios.add(nuevo);
-		guardarUsuarios();
-	}	
+		//se le pasa el usuario dto a su respectiva clase que va a guardarlo si este es valido
+		fabrica.getUsuarioDAO().guardar(aDTO(nuevo));
+		usuarios.add(nuevo);//si este no pasa el guardado en su txt o bd este no a ser añadido ala lista de usuarios registrado
+	}
+
+	// Pasa un usuario del modelo a DTO
+	private UsuarioDTO aDTO(Usuario u) {
+		String licencia = null;
+		List<String> patentes = new ArrayList<>();
+
+		if (u.getConductor() != null) {//si el usuario no es un conductor este solo se guardara con la u¿informacion basica y la licencia en null y una lista de vehiculos vacia ya que no contaria con ninguno
+		
+		//si el usuario es un conductor entonces se le carga tanto su licencia como los vehiculos que le pertenecen	
+			licencia = u.getConductor().getLicenciaConducir();
+			for (Vehiculo v : u.getConductor().getVehiculos()) {
+				patentes.add(v.getPatente());
+			}
+		}
+		//de vuelvo un usuario dto con todos los atributos del usuario cargado 
+		return new UsuarioDTO(u.getNombre(), u.getTelefono(), u.getEmail(), licencia, patentes);
+	}
 }

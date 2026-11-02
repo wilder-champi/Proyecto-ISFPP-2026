@@ -8,6 +8,6 @@ public interface UsuarioDAO {
 
 	List<UsuarioDTO> obtenerTodos();
 	
-	//Este metodo agregara los nuevos usurios a los archivos txt
-	void guardarTodos(List<UsuarioDTO> usuarios);
+	// Guarda un usuario nuevo
+		void guardar(UsuarioDTO usuario);
 }

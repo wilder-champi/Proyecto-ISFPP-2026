@@ -37,10 +37,10 @@ public class UsuarioDaoTxt implements UsuarioDAO {
 
 		for (Linea linea : LectorArchivo.leer(archivo)) { // Con un for each recorremos la list con todas las lineas del
 															// archivo
-			UsuarioDTO usuario = crear(linea , patentesAsignadas); // Crea un objeto de tipo usuario
-																				// pidiendole que lo haga el metodo
-																				// crear que hace unas verificaciones
-																				// antes de crearlo
+			UsuarioDTO usuario = crear(linea, patentesAsignadas); // Crea un objeto de tipo usuario
+																	// pidiendole que lo haga el metodo
+																	// crear que hace unas verificaciones
+																	// antes de crearlo
 
 			if (!emails.add(usuario.getEmail())) { // Add devuelve false si ya estaba
 				throw new ArchivoInvalidoException(archivo, linea.getNumero(), "Email repetido " + usuario.getEmail());
@@ -91,31 +91,26 @@ public class UsuarioDaoTxt implements UsuarioDAO {
 	}
 
 	@Override
-	public void guardarTodos(List<UsuarioDTO> usuarios) {
-		// FileWriter sin "append" vacia el archivo y lo escribe de cero
-		try (PrintWriter escritor = new PrintWriter(new FileWriter(archivo))) {
+	public void guardar(UsuarioDTO usuario) {
+		// Con append en true la linea se agrega al final sin borrar lo que ya habia en el archivo
+		try (PrintWriter escritor = new PrintWriter(new FileWriter(archivo, true))) {
+			//se crea una nueva linea de texto basicas de un usuario con sus tres casillas
+			StringBuilder linea = new StringBuilder();//StringBuilder sirve para ir pegando partes sin tener que crear sin tener que crear un texto nuevo cada ves 
+			linea.append(usuario.getNombre()).append(";").append(usuario.getTelefono()).append(";")
+					.append(usuario.getEmail());
 
-			// Comentario inicial, el lector ignora las lineas que empiezan con #
-			escritor.println("#nombre;telefono;email;licenciaConducir;patente;...");
-
-			for (UsuarioDTO u : usuarios) {
-				StringBuilder linea = new StringBuilder();
-				linea.append(u.getNombre()).append(";")
-					.append(u.getTelefono()).append(";")
-					.append(u.getEmail());
-
-				// Si tiene licencia es conductor: agrego licencia y patentes
-				if (u.getLicencia() != null) {
-					linea.append(";").append(u.getLicencia());
-					for (String patente : u.getPatentes()) {
-						linea.append(";").append(patente);
-					}
+			// Si tiene licencia es conductor: agrego licencia y patentes
+			if (usuario.getLicencia() != null) {
+				linea.append(";").append(usuario.getLicencia());
+				for (String patente : usuario.getPatentes()) {
+					linea.append(";").append(patente);
 				}
-				escritor.println(linea);
 			}
+			//escribe la linea completa
+			escritor.println(linea);
 		} catch (IOException e) {
-			throw new IllegalStateException("No se pudo guardar el archivo " + archivo);
+			throw new IllegalStateException("no se pudo guardar el archivo " + archivo);
 		}
 	}
-	
+
 }

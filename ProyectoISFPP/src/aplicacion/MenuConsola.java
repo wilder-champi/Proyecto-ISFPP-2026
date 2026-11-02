@@ -79,7 +79,7 @@ public class MenuConsola {
 		try {
 			sistema.registrarUsuario(nuevoUsuario);
 			interfazConsola.mostrarMensaje("Usuario Registrado Exitosamente.");
-		} catch (IllegalArgumentException e) {
+		} catch (IllegalArgumentException | UnsupportedOperationException e) {
 			interfazConsola.mostrarError(e.getMessage());
 		}
 		
@@ -118,7 +118,7 @@ public class MenuConsola {
 	}
 	
 /* Estos metodos los deje para el tema de hacer pruebas!! 
- * No borres nada wilder ojito!!
+ * No borres nada wilder ojito!! // le quitas lp divertido a todo mano
 	private void listarUsuarios() {
 		for (int i = 0; i < sistema.getUsuarios().size(); i++) {
 			Usuario u = sistema.getUsuarios().get(i);
