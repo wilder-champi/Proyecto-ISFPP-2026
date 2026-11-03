@@ -15,6 +15,9 @@ import modelo.Servicio;
 import modelo.Usuario;
 import modelo.Vehiculo;
 
+import java.util.HashSet;
+import java.util.Set;
+
 public class SistemaGuardado {
 
 	private final List<Servicio> servicios;
@@ -129,20 +132,37 @@ public class SistemaGuardado {
 		fabrica.getUsuarioDAO().guardarTodos(dtos);
 	}*/
 
-	// Valida el email, le pide al DAO que guarde el usuario y despues lo agrega a la lista
 	public void registrarUsuario(Usuario nuevo) {
-		for (Usuario u : usuarios) {//recorre la lista de usuarios ya cargados para validar si el mails como es unico no se repita ya que no pueden haber dos usuarios con el mismo mail
+		//se valida que el mail del usuario no este repetido ya que es algo unico para cada usuario
+		for (Usuario u : usuarios) {
 			if (u.getEmail().equalsIgnoreCase(nuevo.getEmail())) {
-				throw new IllegalArgumentException("Ya existe un usuario con ese email");
+				throw new IllegalArgumentException("ya existe un usuario con ese email");
 			}
 		}
-		//se le pasa el usuario dto a su respectiva clase que va a guardarlo si este es valido
-		fabrica.getUsuarioDAO().guardar(aDTO(nuevo));
-		usuarios.add(nuevo);//si este no pasa el guardado en su txt o bd este no a ser añadido ala lista de usuarios registrado
+		//se valida que las patentes nuevas no esten oreviamente cargadas en el sistema o por el mismo usuario
+		List<Vehiculo> vehiculosNuevos = new ArrayList<>();
+		if (nuevo.getConductor() != null) {
+			Set<String> patentes = new HashSet<>();
+			for (Vehiculo v : nuevo.getConductor().getVehiculos()) {
+				if (vehiculos.containsKey(v.getPatente()) || !patentes.add(v.getPatente())) {
+					throw new IllegalArgumentException("la patente " + v.getPatente() + " ya esta registrada");
+				}
+				vehiculosNuevos.add(v);
+			}
+		}
+		//primero cargo los vehiculos asi no queda un usuario con un vehiculo no registrado
+		for (Vehiculo v : vehiculosNuevos) {
+			fabrica.getVehiculoDAO().guardar(creeDTO(v));
+		}
+		fabrica.getUsuarioDAO().guardar(creeDTO(nuevo));
+		//si no se llegoa guardar algunos de los dichos datos la lista sigue como hasta ahora tanto como en vehiculos como en usuarios
+		for (Vehiculo v : vehiculosNuevos) {
+			vehiculos.put(v.getPatente(), v);
+		}
+		usuarios.add(nuevo);
 	}
 
-	// Pasa un usuario del modelo a DTO
-	private UsuarioDTO aDTO(Usuario u) {
+	private UsuarioDTO creeDTO(Usuario u) {
 		String licencia = null;
 		List<String> patentes = new ArrayList<>();
 
@@ -156,5 +176,11 @@ public class SistemaGuardado {
 		}
 		//de vuelvo un usuario dto con todos los atributos del usuario cargado 
 		return new UsuarioDTO(u.getNombre(), u.getTelefono(), u.getEmail(), licencia, patentes);
+	}
+	
+	private VehiculoDTO creeDTO(Vehiculo v) {
+		//retorna un vehiculo dto con todos los atributos del vehiculo cargado
+		return new VehiculoDTO(v.getPatente(), v.getModelo(), v.getCapacidadPasajeros(), v.getTipoVehiculo(),
+				v.getCategoriaVehiculo(), new ArrayList<>(v.getTipoServicios()));
 	}
 }
