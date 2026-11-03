@@ -57,19 +57,47 @@ public class Viaje {
 	
 
 	public void aceptar(LocalDateTime fechaHora, Usuario conductor) {
+		
 		if (estadoActual() != EstadoViaje.SOLICITADO) {//verifica que el viaje aun este en solicitud
 			throw new IllegalStateException("El viaje no esta solicitado");
 		}
+		if(conductor==null||conductor.getConductor()==null) {
+			throw new IllegalStateException("El conductor no puede ser null"); 
+		}
+		if(conductor.getEmail().equals(this.cliente.getEmail())) {
+			throw new IllegalStateException("El usuario y le conductor no pueden ser la misma persona"); 
+
+		}
+		if(conductor.getRolActivo().equals(RolUsuario.CLIENTE)) {
+			throw new IllegalStateException("El conductor ahora mismo se encuentra inactivo"); 
+		}
+		if(!(conductor.getConductor().getEstadoConductor().equals(EstadoConductor.DISPONIBLE))) {
+			throw new IllegalStateException("El conductor no esta disponible");
+		}
+		
 		Vehiculo vehiculoConductor = conductor.getConductor().getVehiculoActivo(); //asigno en vehiculo del cunductor
+		
+		if(vehiculoConductor.getTipoVehiculo()!= this.servicio.getTipoVehiculo()) {
+			throw new IllegalStateException("el vehiculo catual del condutor no es el solicitado por el cliente"); 
+		}
+		
+		if(!(vehiculoConductor.getTipoServicios().contains(this.servicio.getTipoServicio()))) {
+			throw new IllegalStateException("el conductor no cumple con los tipos de servcios solicitado"); 
+		}
 		if (vehiculoConductor.getCategoriaVehiculo().getValor() < servicio.getCategoriaVehiculo().getValor()) {//veirfiaca si el vehiculo no cumple con la categoria sulicitada 
 			throw new IllegalStateException("El vehiculo no cumple con la categoria solicitada"); 
 		}
+		
+		
 		//si paso los dictintos chequeos
-		this.conductor = conductor;//se le asigna al viaje un conductor que cuple las ocndiciones
+		this.conductor = conductor;//se le asigna al viaje un conductor que cumple las condiciones
 		this.vehiculo = vehiculoConductor;//el vehiculo pertenesiente a dicho conductor
 		conductor.getConductor().setEstado(EstadoConductor.VIAJE_A_ORIGEN);//se cambia el estado del conductor en vieje hacia la ubicacion del cliente
+		conductor.getConductor().agregarViaje(this);
 		this.registroViaje.add(new RegistroViaje(fechaHora, EstadoViaje.ACEPTADO));//se crea un nuevo registro de viaje para el registro general del viaje y lo coloca como aceptado
 	}
+	
+	
 	
 	
 	
