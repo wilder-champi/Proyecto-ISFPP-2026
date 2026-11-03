@@ -10,6 +10,10 @@ import datos.dto.VehiculoDTO;
 import enums.CategoriaVehiculo;
 import enums.TipoServicio;
 import enums.TipoVehiculo;
+
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.PrintWriter;
 //import logica.GeneradorUbicacion;
 
 
@@ -74,6 +78,31 @@ public class VehiculoDaoTxt implements VehiculoDAO {
 			
 		} catch (IllegalArgumentException e) {
 			throw new ArchivoInvalidoException(archivo, linea.getNumero(), "Valor invalido (" + e.getMessage() + ")");
+		}
+	}
+	
+	@Override
+	public void guardar(VehiculoDTO vehiculo) {
+		if (vehiculo.getPatente().contains(";") || vehiculo.getModelo().contains(";")) {
+			throw new IllegalArgumentException("no se permite el caracter ; en los datos del vehiculo");
+		}
+		if (obtenerTodos().containsKey(vehiculo.getPatente())) {
+			throw new IllegalArgumentException("ya existe un vehiculo con la patente " + vehiculo.getPatente());
+		}
+
+		StringBuilder linea = new StringBuilder();
+		linea.append(vehiculo.getPatente()).append(";").append(vehiculo.getModelo()).append(";")
+				.append(vehiculo.getCapacidadPasajeros()).append(";").append(vehiculo.getTipoVehiculo()).append(";")
+				.append(vehiculo.getCategoriaVehiculo()).append(";");
+		for (TipoServicio tipo : vehiculo.getTiposServicio()) {
+			linea.append(tipo).append(";");
+		}
+
+		// con append en true la linea se agrega al final sin borrar lo que ya habia
+		try (PrintWriter escritor = new PrintWriter(new FileWriter(archivo, true))) {
+			escritor.println(linea);
+		} catch (IOException e) {
+			throw new IllegalStateException("no se pudo guardar el archivo " + archivo);
 		}
 	}
 }
