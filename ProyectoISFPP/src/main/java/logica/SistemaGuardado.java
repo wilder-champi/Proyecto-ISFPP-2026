@@ -14,6 +14,7 @@ import enums.TipoServicio;
 import modelo.Servicio;
 import modelo.Usuario;
 import modelo.Vehiculo;
+import modelo.Viaje;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -24,6 +25,9 @@ public class SistemaGuardado {
 	private final Map<String, Vehiculo> vehiculos;
 	private final List<Usuario> usuarios;
 	private final DAOFactory fabrica;   // junto a los otros atributos
+	
+	private final List<Viaje> viajesPendientes;
+	private final GeneradorUbicacion generadorUbicacion;
 
 	public SistemaGuardado() {
 		this(DAOLoader.getFactory());
@@ -32,13 +36,18 @@ public class SistemaGuardado {
 	public SistemaGuardado(DAOFactory fabrica) {
 		this.fabrica = fabrica;
 		
+		this.generadorUbicacion = new GeneradorUbicacion(-42.87689, -65.20872, -42.57303, -64.78616);
+		
+		this.viajesPendientes = new ArrayList<>();
+
+		
 		// Obtiene los dto mediante los DAO
 		List<ServicioDTO> serviciosDTO = fabrica.getServicioDAO().obtenerTodos();
 		Map<String, VehiculoDTO> vehiculosDTO = fabrica.getVehiculoDAO().obtenerTodos();
 		List<UsuarioDTO> usuariosDTO = fabrica.getUsuarioDAO().obtenerTodos();
 
 		// Convierte los servicios dto al modelo
-		servicios = new ArrayList<>();
+		this.servicios = new ArrayList<>();
 
 		for (ServicioDTO dto : serviciosDTO) {
 
@@ -47,57 +56,63 @@ public class SistemaGuardado {
 			servicios.add(servicio);
 		}
 		// Convierte los vehiculos dto al modelo
-		vehiculos = new LinkedHashMap<>();
+		this.vehiculos = new LinkedHashMap<>();
 
 		for (VehiculoDTO dto : vehiculosDTO.values()) {
-			List<TipoServicio> tipos = dto.getTiposServicio();
+			try {
+				List<TipoServicio> tipos = dto.getTiposServicio();
 
-			if (tipos == null || tipos.isEmpty()) {
-				throw new IllegalArgumentException("El vehiculo no tiene servicios");
+				if (tipos == null || tipos.isEmpty()) {
+					throw new IllegalArgumentException("El vehiculo no tiene servicios");
+				}
+				// Crea el vehiculo con su primer servicio
+				Vehiculo vehiculo = new Vehiculo(dto.getPatente(), dto.getModelo(), dto.getCapacidadPasajeros(),
+						dto.getTipoVehiculo(), dto.getCategoriaVehiculo(), tipos.get(0));
+				// Agrega los otros servicios
+				for (int i = 1; i < tipos.size(); i++) {
+					vehiculo.agregarTipoServicio(tipos.get(i));
+				}
+				vehiculos.put(vehiculo.getPatente(), vehiculo);
+			} catch (IllegalArgumentException e) {
+				// un vehiculo con datos invalidos se saltea y la carga sigue con los demas
+				System.out.println("vehiculo omitido (" + dto.getPatente() + "): " + e.getMessage());
 			}
-			// Crea el vehiculo con su primer servicio
-			Vehiculo vehiculo = new Vehiculo(dto.getPatente(), dto.getModelo(), dto.getCapacidadPasajeros(),
-					dto.getTipoVehiculo(), dto.getCategoriaVehiculo(), tipos.get(0));
-			// Agrega los otros servicios
-			for (int i = 1; i < tipos.size(); i++) {
-				vehiculo.agregarTipoServicio(tipos.get(i));
-			}
-			vehiculos.put(vehiculo.getPatente(), vehiculo);
 		}
 		// Convierte los usuarios dto al modelo
-		usuarios = new ArrayList<>();
+		this.usuarios = new ArrayList<>();
 
 		for (UsuarioDTO dto : usuariosDTO) {
-			Usuario usuario = new Usuario(dto.getNombre(), dto.getTelefono(), dto.getEmail());
+			try {
+				Usuario usuario = new Usuario(dto.getNombre(), dto.getTelefono(), dto.getEmail());
 
-			// Si tiene lisencia, se registra como conductor
-			if (dto.getLicencia() != null) {
+				// Si tiene licencia se registra como conductor
+				if (dto.getLicencia() != null) {
+					List<String> patentes = dto.getPatentes();
 
-				List<String> patentes = dto.getPatentes();
-
-				if (patentes == null || patentes.isEmpty()) {
-					throw new IllegalArgumentException("El conductor no tiene vehiculos");
-				}
-				// Busca el primer vehiculo en el mapa
-				Vehiculo primero = vehiculos.get(patentes.get(0));
-
-				if (primero == null) {
-					throw new IllegalArgumentException("Patente inexistente: " + patentes.get(0));
-				}
-
-				usuario.altaConductor(dto.getLicencia(), primero);
-
-				// Agrega los demas vehiculos
-				for (int i = 1; i < patentes.size(); i++) {
-					Vehiculo extra = vehiculos.get(patentes.get(i));
-
-					if (extra == null) {
-						throw new IllegalArgumentException("Patente inexistente: " + patentes.get(i));
+					if (patentes == null || patentes.isEmpty()) {
+						throw new IllegalArgumentException("El conductor no tiene vehiculos");
 					}
-					usuario.getConductor().agregarVehiculo(extra);
+					Vehiculo primero = vehiculos.get(patentes.get(0));
+
+					if (primero == null) {
+						throw new IllegalArgumentException("Patente inexistente: " + patentes.get(0));
+					}
+					usuario.altaConductor(dto.getLicencia(), primero);
+
+					for (int i = 1; i < patentes.size(); i++) {
+						Vehiculo extra = vehiculos.get(patentes.get(i));
+
+						if (extra == null) {
+							throw new IllegalArgumentException("Patente inexistente: " + patentes.get(i));
+						}
+						usuario.getConductor().agregarVehiculo(extra);
+					}
 				}
+				usuarios.add(usuario);
+			} catch (IllegalArgumentException e) {
+				// un usuario con datos invalidos se saltea y la carga sigue con los demas
+				System.out.println("usuario omitido (" + dto.getEmail() + "): " + e.getMessage());
 			}
-			usuarios.add(usuario);
 		}
 	}
 
@@ -144,7 +159,7 @@ public class SistemaGuardado {
 		if (nuevo.getConductor() != null) {
 			Set<String> patentes = new HashSet<>();
 			for (Vehiculo v : nuevo.getConductor().getVehiculos()) {
-				if (vehiculos.containsKey(v.getPatente()) || !patentes.add(v.getPatente())) {
+				if (vehiculos.containsKey(v.getPatente()) || !patentes.add(v.getPatente())) {//
 					throw new IllegalArgumentException("la patente " + v.getPatente() + " ya esta registrada");
 				}
 				vehiculosNuevos.add(v);
@@ -183,4 +198,30 @@ public class SistemaGuardado {
 		return new VehiculoDTO(v.getPatente(), v.getModelo(), v.getCapacidadPasajeros(), v.getTipoVehiculo(),
 				v.getCategoriaVehiculo(), new ArrayList<>(v.getTipoServicios()));
 	}
+	
+	public void agregarViajePendiente(Viaje viaje) {
+		if (viaje == null) {
+			throw new IllegalArgumentException("el viaje no puede ser null");
+		}
+		if (!viajesPendientes.contains(viaje)) {
+			viajesPendientes.add(viaje);
+		}
+	}
+	
+	public List<Viaje> getViajesPendientes() {
+		return new ArrayList<>(viajesPendientes);
+	}
+	public void removerViajePendiente(Viaje viaje) {
+		viajesPendientes.remove(viaje);
+	}
+	public GeneradorUbicacion getGeneradorUbicacion() {
+		return generadorUbicacion;
+	}
+
+	
+	
+	
+	
+	
+	
 }

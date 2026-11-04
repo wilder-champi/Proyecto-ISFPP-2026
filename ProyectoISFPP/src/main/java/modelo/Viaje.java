@@ -25,6 +25,8 @@ public class Viaje {
 	private RolUsuario rolCancela;
 	private CalificacionViaje calificacionConductor;
 	private CalificacionViaje calificacionCliente;
+	
+	private double costoCancelacion = 0.0;
 
 	public Viaje(UUID id, Ubicacion origen, Ubicacion destino, Servicio servicio, Usuario cliente) {
 		super();
@@ -84,8 +86,13 @@ public class Viaje {
 		if(!(vehiculoConductor.getTipoServicios().contains(this.servicio.getTipoServicio()))) {
 			throw new IllegalStateException("el conductor no cumple con los tipos de servcios solicitado"); 
 		}
-		if (vehiculoConductor.getCategoriaVehiculo().getValor() < servicio.getCategoriaVehiculo().getValor()) {//veirfiaca si el vehiculo no cumple con la categoria sulicitada 
-			throw new IllegalStateException("El vehiculo no cumple con la categoria solicitada"); 
+		if (servicio.getCategoriaVehiculo().getValor() < conductor.getConductor().getCategoriaMinimaAceptada().getValor()) {
+		    throw new IllegalStateException("el viaje no cumple con la categoria minima aceptada por el conductor");
+		}
+
+		// un auto estandar no puede hacer un viaje premium aunque el conductor quiera
+		if (vehiculoConductor.getCategoriaVehiculo().getValor() < servicio.getCategoriaVehiculo().getValor()) {
+		    throw new IllegalStateException("el vehiculo no cumple con la categoria solicitada para el viaje");
 		}
 		
 		
@@ -137,6 +144,25 @@ public class Viaje {
 		}
 		if (usuario.equals(cliente)) {//verifica que el lo cancele sea el usuario que solicito el viaje
 			this.rolCancela = RolUsuario.CLIENTE;//se avisa que el usuario fue el que cancelo el viaje
+			if(estado == EstadoViaje.ACEPTADO ||estado == EstadoViaje.INICIADO) {
+				LocalDateTime fechaAceptado = null;
+				for(RegistroViaje regiAceptado :registroViaje) {
+					if(regiAceptado.getEstadoViaje() == EstadoViaje.ACEPTADO) {
+						fechaAceptado = regiAceptado.getFechaHora();
+					}
+				}
+				if(fechaAceptado !=null) {
+					long minutosTranscurridos = java.time.Duration.between(fechaAceptado, fechaHora).toMinutes();
+					double distanciaKm = 0.0;
+					if(this.conductor != null && this.conductor.getConductor().getVehiculoActivo() != null 
+							&& this.conductor.getConductor().getVehiculoActivo().getUbicacion() != null) {
+						distanciaKm = this.conductor.getConductor().getVehiculoActivo().getUbicacion().calcularDistancia(this.origen);
+					}
+					this.costoCancelacion = (distanciaKm*this.servicio.getPrecioKm())+(minutosTranscurridos*this.servicio.getPrecioMinuto());
+
+				}
+			}
+			
 		} else if (usuario.equals(conductor)) {//verifica que el usuario que cancelo el vaije sea el conductor
 			this.rolCancela = RolUsuario.CONDUCTOR;//se asigna que el que cancelo el viaje fue el mismo conductor
 		} else {//si ninguno de estos fue el que que pidio la cancelaciion del viaje entonces no se realiza dicha cancelacion
@@ -265,5 +291,9 @@ public class Viaje {
 	public void setCalificacionCliente(CalificacionViaje calificacionCliente) {
 		this.calificacionCliente = calificacionCliente;
 	}
+	public double getCostoCancelacion() {
+	    return costoCancelacion;
+	}
+	
 
 }

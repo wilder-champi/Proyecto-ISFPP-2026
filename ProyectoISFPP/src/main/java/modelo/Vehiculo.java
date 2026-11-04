@@ -19,40 +19,53 @@ public class Vehiculo {
 
 	public Vehiculo(String patente, String modelo, int capacidadPasajeros, TipoVehiculo tipo,
 			CategoriaVehiculo categoria, TipoServicio servicio1, Ubicacion ubicacion) {
-
-		Set<TipoServicio> setServicios = EnumSet.noneOf(TipoServicio.class);
-
-		if (servicio1 != null) {
-			setServicios.add(servicio1);
-		}
-
-		if (setServicios.isEmpty()) {
-			throw new IllegalArgumentException("El viaje debe contar con al menos un tipo de servicio");
-		}
-		this.patente = patente;
-		this.modelo = modelo;
-		this.capacidadPasajeros = capacidadPasajeros;
-		this.categoriaVehiculo = categoria;
-		this.tipoVehiculo = tipo;
-		this.tipoServicio = setServicios;
+	this(patente,modelo,capacidadPasajeros,tipo,categoria,servicio1);
 		setUbicacion(ubicacion); // Valida y guarda la ubicacion resivida
 	}
 
 	public Vehiculo(String patente, String modelo, int capacidadPasajeros, TipoVehiculo tipo,
 			CategoriaVehiculo categoria, TipoServicio servicio1) {
 
+		if(patente == null || patente.isBlank()) {
+			throw new IllegalArgumentException("la patente es obligatoria");
+		}
+		String patenteLimpia = patente.trim().toUpperCase();
+		if (patenteLimpia.length() < 6 || patenteLimpia.length() > 7) {
+			throw new IllegalArgumentException("la patente debe contar con almenos 6 o 7 caracteres");
+		}
+		for (int i = 0; i < patenteLimpia.length(); i++) {
+			char c = patenteLimpia.charAt(i);//devueve elc aracter de la posicion i
+			boolean esLetra = c >= 'A' && c <= 'Z';//pregunta si ese caracter esta entre la A y la Z
+			boolean esNumero = c >= '0' && c <= '9';//pregunta si ese caracter esta entre el 0 y el 9
+			if (!esLetra && !esNumero) {
+				throw new IllegalArgumentException("la patente solo puede tener letras y numeros");
+			}
+		}
+		if (modelo == null || modelo.isBlank()) {
+			throw new IllegalArgumentException("el modelo es obligatorio");
+		}
+		if (capacidadPasajeros < 1) {
+			throw new IllegalArgumentException("la capacidad de pasajeros debe ser al menos 1");
+		}
+		if (tipo == null) {
+			throw new IllegalArgumentException("el tipo de vehiculo es obligatorio");
+		}
+		if (categoria == null) {
+			throw new IllegalArgumentException("la categoria es obligatoria");
+		}
+		if (servicio1 == null) {
+			throw new IllegalArgumentException("El vehiculo debe contar con al menos un tipo de servicio");
+		}
+		
 		Set<TipoServicio> setServicios = EnumSet.noneOf(TipoServicio.class);
-
 		if (servicio1 != null) {
 			setServicios.add(servicio1);
 		}
-
 		if (setServicios.isEmpty()) {
 			throw new IllegalArgumentException("El vehiculo debe contar con al menos un tipo de servicio");
 		}
-
-		this.patente = patente;
-		this.modelo = modelo;
+		this.patente = patenteLimpia;
+		this.modelo = modelo.trim();
 		this.capacidadPasajeros = capacidadPasajeros;
 		this.categoriaVehiculo = categoria;
 		this.tipoVehiculo = tipo;

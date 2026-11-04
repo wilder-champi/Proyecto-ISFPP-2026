@@ -1,13 +1,17 @@
 package aplicacion;
 
-import interfaz_consola.interfazConsola;
-
+import java.time.LocalDateTime;
+import java.util.List;
 import java.util.Scanner;
 
+import enums.EstadoViaje;
 import enums.RolUsuario;
+import interfaz_consola.interfazConsola;
 import logica.SistemaGuardado;
 import modelo.Servicio;
+import modelo.Ubicacion;
 import modelo.Usuario;
+import modelo.Viaje;
 
 public class MenuConsola {
 
@@ -19,6 +23,7 @@ public class MenuConsola {
 		sistema = new SistemaGuardado();
 		teclado = new Scanner(System.in);
 		usuarioActual = null;
+
 	}
 
 	//Aplicacion
@@ -75,8 +80,8 @@ public class MenuConsola {
 			return;
 		}
 		
-		Usuario nuevoUsuario = new Usuario(nombre, telefono, email);
 		try {
+			Usuario nuevoUsuario = new Usuario(nombre, telefono, email);
 			sistema.registrarUsuario(nuevoUsuario);
 			interfazConsola.mostrarMensaje("Usuario Registrado Exitosamente.");
 		} catch (IllegalArgumentException | UnsupportedOperationException e) {
@@ -198,10 +203,11 @@ public class MenuConsola {
 				solicitarViaje();
 				break;
 			case 2:
+				cancelarViajeCliente();
 				// TODO: buscar el viaje activo del cliente y llamar a cancelar(...)
 				break;
 			case 3:
-				// TODO: recorrer usuarioActual.getCliente().getViajes() y mostrar estado
+				verMisViajes();
 				break;
 			case 0:
 				break;
@@ -225,8 +231,22 @@ public class MenuConsola {
 		Servicio servicio = sistema.getServicios().get(num - 1);
 
 		// 2) TODO: generar origen y destino con GeneradorUbicacion
+		Ubicacion origen = sistema.getGeneradorUbicacion().generar();
+		Ubicacion destino = sistema.getGeneradorUbicacion().generar();
+		if (origen.calcularDistancia(destino) == 0) {
+		    interfazConsola.mostrarError("el origen y el destino o pueden ser la misma ubicacion");
+		    return;
+		}
 		// 3) TODO: crear el Viaje (new Viaje(usuarioActual, origen, destino, servicio))
+		Viaje nuevoViaje = new Viaje(usuarioActual, origen, destino, servicio);
 		// 4) TODO: llamar viaje.solicitar(LocalDateTime.now()) dentro de un try/catch
+		try {
+		    nuevoViaje.solicitar(LocalDateTime.now());
+		    sistema.agregarViajePendiente(nuevoViaje);
+		    interfazConsola.mostrarMensaje("el vaije fue solicitado con exito el id del viaje es : " + nuevoViaje.getId());
+		} catch (IllegalStateException e) {
+		    interfazConsola.mostrarError(e.getMessage());
+		}
 		// 5) TODO: guardar el viaje en una lista de pendientes para que un conductor lo vea
 	}
 
@@ -272,6 +292,50 @@ public class MenuConsola {
 			return Integer.parseInt(teclado.nextLine().trim());
 		} catch (NumberFormatException e) {
 			return -1;
+		}
+	}
+	
+	
+	private void verMisViajes() {
+		List<Viaje> viajes = usuarioActual.getCliente().getViajes();
+		
+		if (viajes.isEmpty()) {
+			interfazConsola.mostrarMensaje("No tienes viajes registrados.");
+			return; // Acá está bien el return porque termina el método
+		}
+		
+		interfazConsola.mostrarMensaje("--- MIS VIAJES ---");
+		for (Viaje v : viajes) {
+			interfazConsola.mostrarMensaje("ID: " + v.getId());
+			interfazConsola.mostrarMensaje("Estado: " + v.estadoActual());
+			interfazConsola.mostrarMensaje("Servicio: " + v.getServicio().getNombre());
+		}
+	}
+	private void cancelarViajeCliente() {
+		Viaje viajeActivo = null;
+		for (Viaje v : usuarioActual.getCliente().getViajes()) {
+			if (v.estadoActual() == EstadoViaje.SOLICITADO || v.estadoActual() == EstadoViaje.ACEPTADO || v.estadoActual() == EstadoViaje.INICIADO) {
+				viajeActivo = v;
+			}
+		}
+		if (viajeActivo == null) {
+			interfazConsola.mostrarError("no tienes ningun viaje activo para cancelar.");
+			return;
+		}
+		
+		interfazConsola.mostrarMensaje("ingrese el motivo de cancelacion:");
+		String motivo = teclado.nextLine().trim();
+		
+		try {
+			viajeActivo.cancelar(LocalDateTime.now(), usuarioActual, motivo);
+			sistema.removerViajePendiente(viajeActivo); // Lo sacamos de la lista global
+			interfazConsola.mostrarMensaje("viaje cancelado.");
+			
+			if (viajeActivo.getCostoCancelacion() > 0) {
+				interfazConsola.mostrarMensaje("costo de cancelacion: " + viajeActivo.getCostoCancelacion());
+			}
+		} catch (IllegalStateException | IllegalArgumentException e) {
+			interfazConsola.mostrarError("Error al cancelar: " + e.getMessage());
 		}
 	}
 }

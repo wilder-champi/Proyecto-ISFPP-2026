@@ -14,6 +14,18 @@ public class Usuario {
 	private Conductor conductor;
 
 	public Usuario(String nombre, String telefono, String email) {
+		if(nombre == null||nombre.isBlank()) {
+			throw new IllegalArgumentException("el nombre es obligatorio");
+		}
+		for(int digi=0;digi<=9;digi++) {
+			if(nombre.contains(String.valueOf(digi))) {
+				throw new IllegalArgumentException("el nobre no puede contener numeros");
+			}
+		}
+		if(email==null || !(email.endsWith("@email.com"))) {
+			throw new IllegalArgumentException("el formato del email no es valido le falta el '@email.com' al final");
+		}
+		
 		this.nombre = nombre;
 		this.telefono = telefono;
 		this.email = email;
