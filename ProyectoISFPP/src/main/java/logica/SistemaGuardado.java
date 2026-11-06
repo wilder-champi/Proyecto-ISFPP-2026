@@ -115,6 +115,9 @@ public class SistemaGuardado {
 			}
 		}
 	}
+	
+	
+	
 
 	public List<Servicio> getServicios() {
 		return servicios;
@@ -216,6 +219,18 @@ public class SistemaGuardado {
 	}
 	public GeneradorUbicacion getGeneradorUbicacion() {
 		return generadorUbicacion;
+	}
+	
+	public Usuario buscarPorEmail(String email) {
+		if (email == null || email.isBlank()) {
+			return null;
+		}
+		for (Usuario u : getUsuarios()) {
+			if (u.getEmail().equalsIgnoreCase(email.trim())) {
+				return u;
+			}
+		}
+		return null;
 	}
 
 	

@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.ComboBox?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.TableColumn?>
+<?import javafx.scene.control.TableView?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.ColumnConstraints?>
+<?import javafx.scene.layout.GridPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.RowConstraints?>
+<?import javafx.scene.text.Font?>
+
+<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="439.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/26" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controladores.blancoControlador">
+   <children>
+      <GridPane layoutX="23.0" layoutY="63.0" prefHeight="119.0" prefWidth="556.0">
+        <columnConstraints>
+            <ColumnConstraints hgrow="SOMETIMES" maxWidth="120.33334350585938" minWidth="10.0" prefWidth="104.66666666666667" />
+            <ColumnConstraints hgrow="SOMETIMES" maxWidth="163.33333333333331" minWidth="10.0" prefWidth="153.33333333333331" />
+          <ColumnConstraints hgrow="SOMETIMES" maxWidth="128.3333740234375" minWidth="10.0" prefWidth="111.0" />
+          <ColumnConstraints hgrow="SOMETIMES" maxWidth="183.33331298828125" minWidth="10.0" prefWidth="183.33331298828125" />
+        </columnConstraints>
+        <rowConstraints>
+          <RowConstraints maxHeight="30.0" minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+          <RowConstraints maxHeight="30.0" minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+          <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+            <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+        </rowConstraints>
+         <children>
+            <Label text="origen(latitud)" />
+            <Label text="destino(latitud)" GridPane.rowIndex="1" />
+            <Label text="vehiculo" GridPane.rowIndex="2" />
+            <Label text="categoria" GridPane.rowIndex="3" />
+            <Label text="origen(longitud)" GridPane.columnIndex="2" />
+            <Label text="destino(longitud)" GridPane.columnIndex="2" GridPane.rowIndex="1" />
+            <Label prefHeight="18.0" prefWidth="120.0" text="viaje para" GridPane.columnIndex="2" GridPane.rowIndex="2" />
+            <TextField fx:id="TextoLatOrigen" promptText="-42.77" GridPane.columnIndex="1" />
+            <TextField fx:id="TextoLatDestino" promptText="-42.75" GridPane.columnIndex="1" GridPane.rowIndex="1" />
+            <TextField fx:id="TextoLonOrigen" promptText="-65.03" GridPane.columnIndex="3" />
+            <TextField fx:id="TextoLonDestino" promptText="-65.00" GridPane.columnIndex="3" GridPane.rowIndex="1" />
+            <ComboBox fx:id="cmbVehiculo" prefHeight="28.0" prefWidth="149.0" promptText="auto o moto" GridPane.columnIndex="1" GridPane.rowIndex="2" />
+            <ComboBox fx:id="cmbCategoria" prefWidth="150.0" promptText="todas" GridPane.columnIndex="1" GridPane.rowIndex="3" />
+            <ComboBox fx:id="cmbServicio" prefHeight="28.0" prefWidth="172.0" promptText=" pasajeros o envios" GridPane.columnIndex="3" GridPane.rowIndex="2" />
+         </children>
+      </GridPane>
+      <HBox layoutX="37.0" layoutY="200.0" prefHeight="39.0" prefWidth="422.0" spacing="10.0">
+         <children>
+            <Button mnemonicParsing="false" onAction="#onCotizar" text="cotizar" />
+            <Button mnemonicParsing="false" onAction="#onLimpiar" text="limpiar" />
+            <Button mnemonicParsing="false" onAction="#onVolver" text="volver" />
+         </children>
+      </HBox>
+      <Label fx:id="mensajel" layoutX="22.0" layoutY="247.0" prefHeight="18.0" prefWidth="1.0" />
+      <TableView fx:id="tblAlternativas" layoutX="19.0" layoutY="283.0" prefHeight="148.0" prefWidth="563.0">
+         <columns>
+            <TableColumn fx:id="colServicio" prefWidth="260.0" text="Servicio" />
+            <TableColumn fx:id="colPrecio" prefWidth="140.0" text="Precio" />
+            <TableColumn fx:id="colTiempo" prefWidth="160.0" text="Tiempo (min)" />
+         </columns>
+      </TableView>
+      <Label alignment="CENTER" layoutX="151.0" layoutY="14.0" prefHeight="35.0" prefWidth="253.0" text="cotizacion de viaje" textFill="#2e0fe0">
+         <font>
+            <Font name="System Bold Italic" size="24.0" />
+         </font>
+      </Label>
+   </children>
+</AnchorPane>

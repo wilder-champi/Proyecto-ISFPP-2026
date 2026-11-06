@@ -22,7 +22,7 @@ public class Cotizador {
 
 	public Cotizador(List<Servicio> servicios, double velocidadKmh) {
 		if (velocidadKmh <= 0) {
-			throw new IllegalArgumentException("La velocidad promedio debe ser mayor a 0");
+			throw new IllegalArgumentException("la velocidad promedio debe ser mayor a 0");
 		}
 		this.servicios = servicios;
 		this.velocidadKmh = velocidadKmh;
@@ -36,14 +36,14 @@ public class Cotizador {
 
 		double km = origen.calcularDistancia(destino);
 		if (km == 0) {
-			throw new IllegalArgumentException("El origen y el destino no pueden ser el mismo punto");
+			throw new IllegalArgumentException("el origen y el destino no pueden ser el mismo punto");
 		}
 		double minutos = km / velocidadKmh * 60; // tiempo = distancia / velocidad pasado en minutos
 
 		List<Alternativa> alternativas = new ArrayList<>();
-		for (Servicio s : servicios) {
-			if (s.getTipoServicio() == tipo && s.getCategoriaVehiculo() == categoria) {
-				alternativas.add(new Alternativa(s, km, minutos, s.calcularCosto(km, minutos)));
+		for (Servicio servi : servicios) {
+			if (servi.getTipoServicio() == tipo && servi.getCategoriaVehiculo() == categoria) {
+				alternativas.add(new Alternativa(servi, km, minutos, servi.calcularCosto(km, minutos)));
 			}
 		}
 		return alternativas;
