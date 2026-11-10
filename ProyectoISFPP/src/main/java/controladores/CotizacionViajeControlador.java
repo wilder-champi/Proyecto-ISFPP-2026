@@ -19,7 +19,7 @@ import logica.Alternativa;
 import logica.Cotizador;
 import modelo.Ubicacion;
 
-public class blancoControlador implements Controlador {
+public class CotizacionViajeControlador implements Controlador {
 
 	private Navegador navegador;
 	private Contexto contexto;
@@ -133,7 +133,7 @@ public class blancoControlador implements Controlador {
 
 	@FXML
 	void onVolver(ActionEvent event) {
-		navegador.irA("/vistas/nose.fxml");
+		navegador.irA("/vistas/Cliente.fxml");
 	}
 
 }

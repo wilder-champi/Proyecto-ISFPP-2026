@@ -10,8 +10,7 @@ import logica.SistemaGuardado;
 import modelo.Usuario;
 
 
-
-public class NoseControlador implements Controlador {
+public class ClienteControlador implements Controlador {
 
 	private Navegador navegador;
 	private SistemaGuardado sistema;
@@ -22,7 +21,6 @@ public class NoseControlador implements Controlador {
 		this.navegador = navegador;
 		this.sistema = contexto.getSistema();
 		this.contexto = contexto;
-
 	}
 	
 	@FXML
@@ -65,8 +63,7 @@ public class NoseControlador implements Controlador {
     
     private void entrar(Usuario usu) {
     	contexto.setUsuarioActual(usu);
-    	navegador.irA("/vistas/blanco.fxml");
+    	navegador.irA("/vistas/CotizacionViaje.fxml");
     }
-	
 
 }	

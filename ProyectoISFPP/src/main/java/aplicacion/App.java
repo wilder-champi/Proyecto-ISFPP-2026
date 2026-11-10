@@ -11,7 +11,7 @@ import logica.SistemaGuardado;
 public class App extends Application {
 
 	// ruta de la primera vista, dentro de src/main/resources
-	private static final String PRIMERA_VISTA = "/vistas/nose.fxml";
+	private static final String PRIMERA_VISTA = "/vistas/SesionUsuario.fxml";
 
 	@Override
 	public void start(Stage stage) {
@@ -25,6 +25,7 @@ public class App extends Application {
 	}
 
 	public static void main(String[] args) {
+		System.out.println("Java en ejecución: " + System.getProperty("java.version"));
 		launch(args);
 	}
 }
