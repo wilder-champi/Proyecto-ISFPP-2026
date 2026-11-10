@@ -1,5 +1,13 @@
 package datos.dao.txt;
 
+//Estos son para cargar los archivos txt 
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.PrintWriter;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.nio.file.StandardCopyOption;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -7,11 +15,6 @@ import java.util.Set;
 
 import datos.dao.UsuarioDAO;
 import datos.dto.UsuarioDTO;
-
-//Estos son para cargar los archivos txt 
-import java.io.FileWriter;
-import java.io.IOException;
-import java.io.PrintWriter;
 
 public class UsuarioDaoTxt implements UsuarioDAO {
 
@@ -92,25 +95,46 @@ public class UsuarioDaoTxt implements UsuarioDAO {
 
 	@Override
 	public void guardar(UsuarioDTO usuario) {
-		// Con append en true la linea se agrega al final sin borrar lo que ya habia en el archivo
 		try (PrintWriter escritor = new PrintWriter(new FileWriter(archivo, true))) {
-			//se crea una nueva linea de texto basicas de un usuario con sus tres casillas
-			StringBuilder linea = new StringBuilder();//StringBuilder sirve para ir pegando partes sin tener que crear sin tener que crear un texto nuevo cada ves 
-			linea.append(usuario.getNombre()).append(";").append(usuario.getTelefono()).append(";")
-					.append(usuario.getEmail());
-
-			// Si tiene licencia es conductor: agrego licencia y patentes
-			if (usuario.getLicencia() != null) {
-				linea.append(";").append(usuario.getLicencia());
-				for (String patente : usuario.getPatentes()) {
-					linea.append(";").append(patente);
-				}
-			}
-			//escribe la linea completa
-			escritor.println(linea);
+			escritor.println(armarLinea(usuario));
 		} catch (IOException e) {
 			throw new IllegalStateException("no se pudo guardar el archivo " + archivo);
 		}
 	}
+	
+	@Override
+	public void guardarTodos(List<UsuarioDTO> usuarios) {
+		// se escribe en un archivo temporal para no perder datos si falla a mitad
+		Path temporal = Paths.get(archivo + ".tmp");
+		try (PrintWriter escritor = new PrintWriter(new FileWriter(temporal.toFile()))) {
+			for (UsuarioDTO u : usuarios) {
+				escritor.println(armarLinea(u));
+			}
+		} catch (IOException e) {
+			throw new IllegalStateException("no se pudo guardar el archivo " + archivo);
+		}
+		try {
+			Files.move(temporal, Paths.get(archivo), StandardCopyOption.REPLACE_EXISTING);
+		} catch (IOException e) {
+			throw new IllegalStateException("no se pudo reemplazar el archivo " + archivo);
+		}
+	}
+	
+	private String armarLinea(UsuarioDTO usuario) {
+		StringBuilder linea = new StringBuilder();
+		linea.append(usuario.getNombre()).append(";").append(usuario.getTelefono()).append(";")
+				.append(usuario.getEmail());
+		if (usuario.getLicencia() != null) {
+			linea.append(";").append(usuario.getLicencia());
+			for (String patente : usuario.getPatentes()) {
+				linea.append(";").append(patente);
+			}
+		}
+		return linea.toString();
+	}
+	
+	
+	
+	
 
 }

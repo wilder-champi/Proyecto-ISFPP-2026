@@ -65,5 +65,11 @@ public class ClienteControlador implements Controlador {
     	contexto.setUsuarioActual(usu);
     	navegador.irA("/vistas/CotizacionViaje.fxml");
     }
+    
+    @FXML
+    void onsalir(ActionEvent event) {
+    	navegador.irA("/vistas/SesionUsuario.fxml");
+    }
+
 
 }	

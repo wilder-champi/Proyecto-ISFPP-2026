@@ -233,7 +233,34 @@ public class SistemaGuardado {
 		return null;
 	}
 
-	
+	public void agregarVehiculoAConductor(Usuario usuario, Vehiculo vehiculo) {
+		if (usuario == null || usuario.getConductor() == null) {
+			throw new IllegalArgumentException("el usuario no es conductor");
+		}
+		if (vehiculos.containsKey(vehiculo.getPatente())) {
+			throw new IllegalArgumentException("la patente " + vehiculo.getPatente() + " ya esta registrada");
+		}
+
+		// armo todos los usuarios, con la patente nueva en el que corresponde
+		List<UsuarioDTO> dtos = new ArrayList<>();
+		for (Usuario u : usuarios) {
+			dtos.add(u == usuario ? creeDTO(u, vehiculo) : creeDTO(u));
+		}
+
+		// primero se guardan los datos y recién si salió bien se cambia la memoria
+		fabrica.getVehiculoDAO().guardar(creeDTO(vehiculo));
+		fabrica.getUsuarioDAO().guardarTodos(dtos);
+
+		usuario.getConductor().agregarVehiculo(vehiculo);
+		vehiculos.put(vehiculo.getPatente(), vehiculo);
+	}
+
+	private UsuarioDTO creeDTO(Usuario u, Vehiculo extra) {
+		UsuarioDTO base = creeDTO(u);
+		List<String> patentes = new ArrayList<>(base.getPatentes());
+		patentes.add(extra.getPatente());
+		return new UsuarioDTO(base.getNombre(), base.getTelefono(), base.getEmail(), base.getLicencia(), patentes);
+	}
 	
 	
 	

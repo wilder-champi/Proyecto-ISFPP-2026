@@ -10,4 +10,5 @@ public interface UsuarioDAO {
 	
 	// Guarda un usuario nuevo
 		void guardar(UsuarioDTO usuario);
+		void guardarTodos(List<UsuarioDTO> usuarios);
 }

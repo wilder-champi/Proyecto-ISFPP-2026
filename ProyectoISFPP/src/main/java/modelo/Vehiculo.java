@@ -80,6 +80,19 @@ public class Vehiculo {
 
 		this.tipoServicio.add(tipoServicio);
 	}
+	
+	public void quitarTipoServicio(TipoServicio tipo) {
+		if (tipo == null) {
+			throw new IllegalArgumentException("El tipo de servicio no puede ser null");
+		}
+		if (!this.tipoServicio.contains(tipo)) {
+			return; // ya no lo tenía no hay nada que quitar
+		}
+		if (this.tipoServicio.size() == 1) {
+			throw new IllegalArgumentException("El vehiculo debe contar con al menos un tipo de servicio");
+		}
+		this.tipoServicio.remove(tipo);
+	}
 
 	// Este metodo en si hace una copia asi no perdierdo la condicion del viaje que
 	// mayuscula

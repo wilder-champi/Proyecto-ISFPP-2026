@@ -22,8 +22,9 @@
       <ComboBox fx:id="cmbTipoVehiculo" layoutX="59.0" layoutY="255.0" prefHeight="26.0" prefWidth="125.0" promptText="Tipo Vehiculo" />
       <ComboBox fx:id="cmbCategoria" layoutX="59.0" layoutY="298.0" prefHeight="26.0" prefWidth="126.0" promptText="Categoria" />
       <HBox layoutX="59.0" layoutY="373.0" prefHeight="28.0" prefWidth="294.0" spacing="15.0" />
-      <ComboBox fx:id="cmbTipoServicio" layoutX="59.0" layoutY="347.0" onAction="#onTipoServicio" prefWidth="150.0" promptText="Tipo de Servicio" />
+      <ComboBox fx:id="cmbTipoServicio" layoutX="59.0" layoutY="347.0" prefWidth="150.0" promptText="Tipo de Servicio" />
       <Button layoutX="48.0" layoutY="402.0" mnemonicParsing="false" onAction="#OnVolver" prefHeight="26.0" prefWidth="149.0" text="Volver" />
       <Button layoutX="242.0" layoutY="402.0" mnemonicParsing="false" onAction="#onFinalizarRegistro" prefHeight="26.0" prefWidth="154.0" text="Finalizar Registro" />
+      <Label fx:id="mensajel" layoutX="52.0" layoutY="446.0" />
    </children>
 </AnchorPane>

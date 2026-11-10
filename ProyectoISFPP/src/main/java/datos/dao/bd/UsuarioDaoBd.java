@@ -80,4 +80,10 @@ public class UsuarioDaoBd implements UsuarioDAO {
 		// ahcer modificaciones alas dichas tablas
 		throw new UnsupportedOperationException("la base de datos es de solo lectura por el momento");
 	}
+
+	@Override
+	public void guardarTodos(List<UsuarioDTO> usuarios) {
+		// TODO Auto-generated method stub
+		throw new UnsupportedOperationException("la base de datos es de solo lectura por el momento");
+	}
 }

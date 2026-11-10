@@ -1,5 +1,6 @@
 package controladores;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 import aplicacion.Contexto;
@@ -18,6 +19,7 @@ import javafx.scene.control.cell.PropertyValueFactory;
 import logica.Alternativa;
 import logica.Cotizador;
 import modelo.Ubicacion;
+import modelo.Viaje;
 
 public class CotizacionViajeControlador implements Controlador {
 
@@ -106,6 +108,34 @@ public class CotizacionViajeControlador implements Controlador {
 		}catch (IllegalArgumentException e) {
 			mensajel.setText(e.getMessage());
 		}
+	}
+	
+	@FXML
+	void onSolicitar(ActionEvent event) {
+	    mensajel.setText("");
+	    FilaAlternativa fila = tblAlternativas.getSelectionModel().getSelectedItem();
+	    if (fila == null) {
+	        mensajel.setText("elegí una alternativa de la tabla");
+	        return;
+	    }
+	    try {
+	        Ubicacion origen  = new Ubicacion(leer(TextoLatOrigen),  leer(TextoLonOrigen));
+	        Ubicacion destino = new Ubicacion(leer(TextoLatDestino), leer(TextoLonDestino));
+
+	        Viaje viaje = new Viaje(
+	            contexto.getUsuarioActual(),
+	            origen,
+	            destino,
+	            fila.getAlternativa().getServicio()
+	        );
+	        viaje.solicitar(LocalDateTime.now());
+	        contexto.getSistema().agregarViajePendiente(viaje);
+
+	        mensajel.setText("viaje solicitado, id " + viaje.getId());
+	        tblAlternativas.getItems().clear();
+	    } catch (IllegalStateException | IllegalArgumentException e) {
+	        mensajel.setText(e.getMessage());
+	    }
 	}
 
 	private double leer(TextField campo) {
