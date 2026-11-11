@@ -18,13 +18,13 @@ public class SesionUsuarioControlador implements Controlador {
 	// Se ejecuta al presionar "Ingresar como Usuario"
 	 @FXML
 	 void onIngresarUsuario(ActionEvent event) {
-		 navegador.irA("/vistas/Cliente.fxml"); 
+		 navegador.irA("/vistas/Cliente.fxml");//usa la clase navegador para ir ala siguene vista que seria login de usuario 
 	 }
 	
 	// Se ejecuta al presionar "Ingresar como Conductor"
 	 @FXML
 	 void onIngresarConductor(ActionEvent event) {
-		 navegador.irA("/vistas/Conductor.fxml"); 
+		 navegador.irA("/vistas/Conductor.fxml"); //usa la clase navegador para ir ala siguene vista que seria login de conductor
 	 }
 			
 }

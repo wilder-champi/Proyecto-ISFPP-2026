@@ -1,5 +1,4 @@
-#nombre;telefono;email;licenciaConducir;patente;...
-Juan Perez;+549117363900;juan.perez@email.com;A13-B1-D1-E1;AD123BC;123ABC;AD012HI
+Juan Perez;+549117363900;juan.perez@email.com;A13-B1-D1-E1;AD123BC;123ABC;AD012HI;6767HHE;9999OK
 Maria Gomez;+549112933912;maria.gomez@email.com
 Carlos Rodriguez;+549112209805;carlos.rodriguez@email.com
 Ana Martinez;+549118220576;ana.martinez@email.com;B1-D1;AB456DE

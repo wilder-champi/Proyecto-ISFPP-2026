@@ -19,6 +19,13 @@ import modelo.Conductor;
 import modelo.Vehiculo;
 import modelo.Viaje;
 
+import java.net.URL;
+import java.util.Locale;
+import javafx.concurrent.Worker;
+import javafx.scene.web.WebEngine;
+import javafx.scene.web.WebView;
+import modelo.Ubicacion;
+
 public class ConductorViajesControlador implements Controlador {
 
 	private Navegador navegador;
@@ -52,22 +59,31 @@ public class ConductorViajesControlador implements Controlador {
     private CheckBox chkEnvios;
     @FXML
     private CheckBox chkPasajeros;
+    
+    @FXML
+    private WebView mapaWeb;
+
+    private WebEngine motor;
+    private boolean mapaListo = false;
 
     
     @Override
-	public void init(Navegador navegador, Contexto contexto) {
-    	this.navegador = navegador;
-    	this.contexto = contexto;
-    	configurarTabla();
-    	cargarVehiculos();
-    	mostrarServiciosDelVehiculo();
-    	cargarViajesPendientes();
-    	mostrarEstado();
+	public void init(Navegador navegador, Contexto contexto) {//usamos int para las asignaciones necesariaspara que la vista funcione adecuadamente
+    	this.navegador = navegador;//asigno el navegador que me pedmite moverme entre vistas
+    	this.contexto = contexto;//asigno el contexto que contiene lo que necesito apra que el progama funcione
+    	configurarTabla();//llamamos al metodo que configura la tabla donde se mostraran los viajes disponibles
+    	cargarVehiculos();//cargamos ala combobox de vehiculos lso vehiculos que le pertenecen al usuario actual/logeado
+    	mostrarServiciosDelVehiculo();//aignamos a los CheckBox lso servicios del vehiculo actual del usuario
+    	cargarViajesPendientes();//llamamos a este metodo para que cargue la tabla con los viajes pendientes
+    	mostrarEstado();//cargamso el estado actual del conductor
+    	cargarMapa();
+    	configurarSeleccion();
 	}
-    private void cargarViajesPendientes() {
-    	tblAlternativas.getItems().clear();
-    	for (Viaje v : contexto.getSistema().getViajesPendientes()) {
-    		tblAlternativas.getItems().add(new FilaViaje(v));
+    
+    private void cargarViajesPendientes() {//se utiliza para cargar en la tabla los viajes pendientes o disponibles
+    	tblAlternativas.getItems().clear();//limiamos los items de la tabla
+    	for (Viaje v : contexto.getSistema().getViajesPendientes()) {//exploramso todos los viajes pendientes que se guardarond e manera de compilacion en el porgrama
+    		tblAlternativas.getItems().add(new FilaViaje(v));//se crea una fila apartir de ese viaje pendiente y se añade como un item de la tabla
     	}
     }
     	
@@ -78,10 +94,10 @@ public class ConductorViajesControlador implements Controlador {
 		colKilometro.setCellValueFactory(new PropertyValueFactory<>("kilometro"));
     }
     
-    private void cargarVehiculos() {
+    private void cargarVehiculos() {//se usa para cargar en el combobox lso vehiculos del usuario añadiendolos como items
     	cmbVehiculos.getItems().addAll(contexto.getUsuarioActual().getConductor().getVehiculos());
-    	cmbVehiculos.setConverter(new ConversorVehiculo());
-    	cmbVehiculos.setValue(contexto.getVehiculoActual()); // deja marcado el actual
+    	cmbVehiculos.setConverter(new ConversorVehiculo());//pasamos en si los items de manera convertida como si es un auto o moto con la calse conversor vehiculo
+    	cmbVehiculos.setValue(contexto.getVehiculoActual()); // deja marcado el actual vehiculo
     }
     
     private void mostrarServiciosDelVehiculo() {
@@ -97,22 +113,21 @@ public class ConductorViajesControlador implements Controlador {
     void onAgregarVehiculo(ActionEvent event) {
     	navegador.irA("/vistas/Vehiculo.fxml");
     }
-
     @FXML
     void onCambiarVehiculo(ActionEvent event) {
-    	mensajel.setText("");
-    	Vehiculo elegido = cmbVehiculos.getValue();
-    	if (elegido == null || elegido == contexto.getVehiculoActual()) {
-    		return; // nada que cambiar
-    	}
-    	try {
-    		contexto.getUsuarioActual().getConductor().setVehiculoActivo(elegido);
-    		contexto.setVehiculoActual(elegido);
-    		mostrarServiciosDelVehiculo();
-    	} catch (IllegalStateException | IllegalArgumentException e) {
-    		mensajel.setText(e.getMessage()); // "debe estar fuera de servicio para cambiar de vehículo"
-    		cmbVehiculos.setValue(contexto.getVehiculoActual()); // el combo vuelve al anterior
-    	}
+        Vehiculo elegido = cmbVehiculos.getValue();
+        if (elegido == null || elegido == contexto.getVehiculoActual()) {
+            return;
+        }
+        mensajel.setText("");
+        try {
+            contexto.getUsuarioActual().getConductor().setVehiculoActivo(elegido);
+            contexto.setVehiculoActual(elegido);
+            mostrarServiciosDelVehiculo();
+        } catch (IllegalStateException | IllegalArgumentException e) {
+            mensajel.setText(e.getMessage());
+            cmbVehiculos.setValue(contexto.getVehiculoActual());
+        }
     }
 
     @FXML
@@ -207,6 +222,43 @@ public class ConductorViajesControlador implements Controlador {
     	} catch (IllegalStateException | IllegalArgumentException e) {
     		mensajel.setText(e.getMessage());
     	}
+    }
+    
+    
+    
+    
+    
+    private void cargarMapa() {
+        motor = mapaWeb.getEngine();
+        motor.setUserAgent("CotizadorViajes/1.0");
+        motor.getLoadWorker().stateProperty().addListener((obs, viejo, nuevo) -> {
+            if (nuevo == Worker.State.SUCCEEDED) {
+                mapaListo = true;
+            }
+        });
+        URL url = getClass().getResource("/vistas/mapa.html");
+        motor.load(url.toExternalForm());
+    }
+
+    private void configurarSeleccion() {
+        tblAlternativas.getSelectionModel().selectedItemProperty().addListener((obs, anterior, fila) -> {
+            if (!mapaListo) {
+                return;
+            }
+            if (fila == null) {
+                motor.executeScript("limpiarViaje()");
+            } else {
+                mostrarEnMapa(fila.getViaje());
+            }
+        });
+    }
+
+    private void mostrarEnMapa(Viaje viaje) {
+        Ubicacion o = viaje.getOrigen();
+        Ubicacion d = viaje.getDestino();
+        String js = String.format(Locale.US, "mostrarViaje(%.6f, %.6f, %.6f, %.6f)",
+                o.getLatitud(), o.getLongitud(), d.getLatitud(), d.getLongitud());
+        motor.executeScript(js);
     }
     
     

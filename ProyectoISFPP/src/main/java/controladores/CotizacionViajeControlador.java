@@ -16,10 +16,16 @@ import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TextField;
 import javafx.scene.control.cell.PropertyValueFactory;
+import javafx.scene.web.WebView;
 import logica.Alternativa;
 import logica.Cotizador;
 import modelo.Ubicacion;
 import modelo.Viaje;
+
+import java.net.URL;
+import javafx.concurrent.Worker;
+import javafx.scene.web.WebEngine;
+import netscape.javascript.JSObject;
 
 public class CotizacionViajeControlador implements Controlador {
 
@@ -58,6 +64,12 @@ public class CotizacionViajeControlador implements Controlador {
 	@FXML
 	private Label mensajel;
 
+	@FXML
+	private WebView mapaWeb;
+
+	private WebEngine motor;
+	private PuenteMapa puente;
+
 	@Override
 	public void init(Navegador navegador, Contexto contexto) {
 		this.navegador = navegador;
@@ -69,6 +81,7 @@ public class CotizacionViajeControlador implements Controlador {
 	private void initialize() {
 		configurarTabla();
 		cargarCombos();
+		cargarMapa();
 	}
 
 	private void configurarTabla() {
@@ -95,56 +108,51 @@ public class CotizacionViajeControlador implements Controlador {
 				return;
 			}
 
-			List<Alternativa> alternativas = cotizador.consultar(origen, destino, cmbServicio.getValue(),cmbCategoria.getValue());
+			List<Alternativa> alternativas = cotizador.consultar(origen, destino, cmbServicio.getValue(),
+					cmbCategoria.getValue());
 
 			tblAlternativas.getItems().clear();
-			
+
 			for (Alternativa a : alternativas) {
 				tblAlternativas.getItems().add(new FilaAlternativa(a));
 			}
 			if (alternativas.isEmpty()) {
 				mensajel.setText("no hay servicios para esa combinacion");
 			}
-		}catch (IllegalArgumentException e) {
+		} catch (IllegalArgumentException e) {
 			mensajel.setText(e.getMessage());
 		}
 	}
-	
+
 	@FXML
 	void onSolicitar(ActionEvent event) {
-	    mensajel.setText("");
-	    FilaAlternativa fila = tblAlternativas.getSelectionModel().getSelectedItem();
-	    if (fila == null) {
-	        mensajel.setText("elegí una alternativa de la tabla");
-	        return;
-	    }
-	    try {
-	        Ubicacion origen  = new Ubicacion(leer(TextoLatOrigen),  leer(TextoLonOrigen));
-	        Ubicacion destino = new Ubicacion(leer(TextoLatDestino), leer(TextoLonDestino));
+		mensajel.setText("");
+		FilaAlternativa fila = tblAlternativas.getSelectionModel().getSelectedItem();
+		if (fila == null) {
+			mensajel.setText("elegí una alternativa de la tabla");
+			return;
+		}
+		try {
+			Ubicacion origen = new Ubicacion(leer(TextoLatOrigen), leer(TextoLonOrigen));
+			Ubicacion destino = new Ubicacion(leer(TextoLatDestino), leer(TextoLonDestino));
 
-	        Viaje viaje = new Viaje(
-	            contexto.getUsuarioActual(),
-	            origen,
-	            destino,
-	            fila.getAlternativa().getServicio()
-	        );
-	        viaje.solicitar(LocalDateTime.now());
-	        contexto.getSistema().agregarViajePendiente(viaje);
+			Viaje viaje = new Viaje(contexto.getUsuarioActual(), origen, destino, fila.getAlternativa().getServicio());
+			viaje.solicitar(LocalDateTime.now());
+			contexto.getSistema().agregarViajePendiente(viaje);
 
-	        mensajel.setText("viaje solicitado, id " + viaje.getId());
-	        tblAlternativas.getItems().clear();
-	    } catch (IllegalStateException | IllegalArgumentException e) {
-	        mensajel.setText(e.getMessage());
-	    }
+			mensajel.setText("viaje solicitado, id " + viaje.getId());
+			tblAlternativas.getItems().clear();
+		} catch (IllegalStateException | IllegalArgumentException e) {
+			mensajel.setText(e.getMessage());
+		}
 	}
 
 	private double leer(TextField campo) {
-	    try {
-	        return Double.parseDouble(campo.getText().trim());
-	    } catch (NumberFormatException e) {
-	        throw new IllegalArgumentException(
-	            "las cordenadas tienen que ser numeros con punto (ej: -42.67)");
-	    }
+		try {
+			return Double.parseDouble(campo.getText().trim());
+		} catch (NumberFormatException e) {
+			throw new IllegalArgumentException("las cordenadas tienen que ser numeros con punto (ej: -42.67)");
+		}
 	}
 
 	@FXML
@@ -158,12 +166,54 @@ public class CotizacionViajeControlador implements Controlador {
 		cmbCategoria.setValue(null);
 		tblAlternativas.getItems().clear();
 		mensajel.setText("");
+		motor.executeScript("limpiarMarcadores()");
 
 	}
 
 	@FXML
 	void onVolver(ActionEvent event) {
 		navegador.irA("/vistas/Cliente.fxml");
+	}
+
+	@FXML
+	void onMarcarDestinoMapa(ActionEvent event) {
+	    motor.executeScript("activarSeleccion('destino')");
+
+	}
+
+	@FXML
+	void onMarcarOrigenMapa(ActionEvent event) {
+	    motor.executeScript("activarSeleccion('origen')");
+	}
+
+	private void cargarMapa() {
+
+	    motor = mapaWeb.getEngine();
+	    motor.setUserAgent("CotizadorViajes/1.0");
+
+	    puente = new PuenteMapa();
+	    motor.getLoadWorker().stateProperty().addListener((obs, viejo, nuevo) -> {
+	        if (nuevo == Worker.State.SUCCEEDED) {
+	            JSObject ventana = (JSObject) motor.executeScript("window");
+	            ventana.setMember("javaBridge", puente);
+	        }
+	    });
+
+	    URL url = getClass().getResource("/vistas/mapa.html");
+	    motor.load(url.toExternalForm());
+
+	}
+
+	public class PuenteMapa {
+		public void seleccionarPunto(String tipo, double lat, double lon) {
+			if ("origen".equals(tipo)) {
+				TextoLatOrigen.setText(String.valueOf(lat));
+				TextoLonOrigen.setText(String.valueOf(lon));
+			} else if ("destino".equals(tipo)) {
+				TextoLatDestino.setText(String.valueOf(lat));
+				TextoLonDestino.setText(String.valueOf(lon));
+			}
+		}
 	}
 
 }

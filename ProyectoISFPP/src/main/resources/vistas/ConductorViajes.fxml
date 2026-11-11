@@ -10,8 +10,9 @@
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
+<?import javafx.scene.web.WebView?>
 
-<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/26" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controladores.ConductorViajesControlador">
+<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="888.0" xmlns="http://javafx.com/javafx/26" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controladores.ConductorViajesControlador">
    <children>
       <VBox prefHeight="189.0" prefWidth="168.0">
          <children>
@@ -49,7 +50,8 @@
       </Label>
       <CheckBox layoutX="187.0" layoutY="79.0" mnemonicParsing="false" onAction="#onEstadoConductor" prefHeight="18.0" prefWidth="122.0" text="Estado conductor" />
       <Label fx:id="mensajel" layoutX="14.0" layoutY="200.0" />
-      <Button layoutX="503.0" layoutY="294.0" mnemonicParsing="false" onAction="#onAceptarViaje" text="aceptar viaje" />
+      <Button layoutX="638.0" layoutY="361.0" mnemonicParsing="false" onAction="#onAceptarViaje" text="aceptar viaje" />
       <Label fx:id="lblEstado" layoutX="8.0" layoutY="222.0" />
+      <WebView fx:id="mapaWeb" layoutX="509.0" layoutY="12.0" prefHeight="339.0" prefWidth="365.0" />
    </children>
 </AnchorPane>

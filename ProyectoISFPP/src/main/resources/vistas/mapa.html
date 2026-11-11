@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8" />
+<title>Mapa de Viajes</title>
+<link rel="stylesheet" href="leaflet/leaflet.css" />
+<script src="leaflet/leaflet.js"></script>
+<style>
+  html, body { height: 100%; margin: 0; padding: 0; overflow: hidden; }
+  #map { height: 100%; width: 100%; }
+  #mensaje { position: absolute; top: 8px; left: 0; width: 100%; z-index: 1000;
+             text-align: center; font-family: sans-serif; color: red;
+             pointer-events: none; display: none; }
+</style>
+</head>
+<body>
+<div id="mensaje"></div>
+<div id="map"></div>
+<script>
+  // ---------------------------------------------------------------
+  // MAPA BASE
+  // ---------------------------------------------------------------
+  var map = L.map('map', {
+    zoomAnimation: false,
+    fadeAnimation: false,
+    markerZoomAnimation: false,
+    inertia: false
+  }).setView([-42.77, -65.03], 13);
+
+  var calles = L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
+    maxZoom: 19,
+    updateWhenIdle: false,
+    updateWhenZooming: false,
+    keepBuffer: 4,
+    attribution: '© OpenStreetMap'
+  });
+
+  var satelite = L.tileLayer(
+    'https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}', {
+    maxNativeZoom: 17,
+    maxZoom: 21,
+    updateWhenIdle: false,
+    updateWhenZooming: false,
+    keepBuffer: 4,
+    attribution: 'Tiles © Esri'
+  });
+
+  calles.addTo(map);
+  L.control.layers({ 'Calles': calles, 'Satélite': satelite }).addTo(map);
+  map.attributionControl.addAttribution('Rutas: OSRM');
+
+  // reajusta el mapa cuando cambia el tamaño del contenedor
+  new ResizeObserver(function () { map.invalidateSize({animate: false}); })
+    .observe(document.getElementById('map'));
+
+  // ---------------------------------------------------------------
+  // ESTADO
+  // ---------------------------------------------------------------
+  var OSRM = 'https://router.project-osrm.org';
+  var MAX_DISTANCIA_CALLE = 100;   // metros: más lejos que esto no cuenta como "sobre una calle"
+
+  var modoSeleccion = null;        // 'origen' | 'destino' | null
+  var marcadores = {};             // un marcador por tipo: origen / destino
+  var consultando = false;         // evita clics mientras se espera a OSRM
+  var capaRuta = L.layerGroup().addTo(map);     // ruta de la pantalla de cotización
+  var capaViaje = L.layerGroup().addTo(map);    // viaje de la pantalla del conductor
+  var contadorViaje = 0;
+
+  // ---------------------------------------------------------------
+  // UTILIDADES
+  // ---------------------------------------------------------------
+  function aviso(texto) {
+    var msg = document.getElementById('mensaje');
+    msg.innerText = texto;
+    msg.style.display = 'block';
+    setTimeout(function () {
+      if (modoSeleccion) {
+        msg.innerText = "Haz clic para marcar el " + modoSeleccion.toUpperCase();
+      } else {
+        msg.style.display = 'none';
+      }
+    }, 2500);
+  }
+
+  // Pide a OSRM la ruta en auto (respeta sentidos de circulación).
+  // alExito recibe la geometría GeoJSON del recorrido.
+  function pedirRuta(lonO, latO, lonD, latD, alExito, alFallar) {
+    var url = OSRM + '/route/v1/driving/' + lonO + ',' + latO + ';' + lonD + ',' + latD
+            + '?overview=full&geometries=geojson';
+    fetch(url)
+      .then(function (r) { return r.json(); })
+      .then(function (datos) {
+        if (datos.code === 'Ok') {
+          alExito(datos.routes[0].geometry);
+        } else if (alFallar) {
+          alFallar();
+        }
+      })
+      .catch(function () { if (alFallar) { alFallar(); } });
+  }
+
+  // Dibuja el recorrido entre el origen y el destino marcados (cotización)
+  function dibujarRuta() {
+    if (!marcadores.origen || !marcadores.destino) return;
+    var o = marcadores.origen.getLatLng();
+    var d = marcadores.destino.getLatLng();
+    pedirRuta(o.lng, o.lat, d.lng, d.lat,
+      function (geometria) {
+        capaRuta.clearLayers();
+        var linea = L.geoJSON(geometria, { style: { color: 'blue', weight: 5 } });
+        capaRuta.addLayer(linea);
+        map.fitBounds(linea.getBounds(), { padding: [40, 40], animate: false });
+      },
+      function () { aviso('No se encontró un recorrido entre esos puntos'); });
+  }
+
+  // ---------------------------------------------------------------
+  // LLAMADAS DESDE JAVA (executeScript)
+  // ---------------------------------------------------------------
+  window.activarSeleccion = function (tipo) {
+    modoSeleccion = tipo;
+    var msg = document.getElementById('mensaje');
+    msg.innerText = "Haz clic para marcar el " + tipo.toUpperCase();
+    msg.style.display = "block";
+  };
+
+  window.limpiarMarcadores = function () {
+    for (var k in marcadores) { map.removeLayer(marcadores[k]); }
+    marcadores = {};
+    capaRuta.clearLayers();
+    modoSeleccion = null;
+    document.getElementById('mensaje').style.display = 'none';
+  };
+
+  // Pantalla del conductor: muestra origen, destino y recorrido de un viaje
+  window.mostrarViaje = function (latO, lonO, latD, lonD) {
+    var pedido = ++contadorViaje;   // si se elige otra fila mientras tanto, se descarta la respuesta vieja
+    capaViaje.clearLayers();
+    capaViaje.addLayer(L.marker([latO, lonO]).bindTooltip('Origen', { permanent: true }));
+    capaViaje.addLayer(L.marker([latD, lonD]).bindTooltip('Destino', { permanent: true }));
+
+    // línea recta provisoria mientras llega la ruta real
+    var recta = L.polyline([[latO, lonO], [latD, lonD]], { color: 'gray', dashArray: '6' });
+    capaViaje.addLayer(recta);
+    map.fitBounds(recta.getBounds(), { padding: [40, 40], animate: false });
+
+    pedirRuta(lonO, latO, lonD, latD, function (geometria) {
+      if (pedido !== contadorViaje) return;
+      capaViaje.removeLayer(recta);
+      var linea = L.geoJSON(geometria, { style: { color: 'blue', weight: 5 } });
+      capaViaje.addLayer(linea);
+      map.fitBounds(linea.getBounds(), { padding: [40, 40], animate: false });
+    });
+  };
+
+  window.limpiarViaje = function () {
+    contadorViaje++;
+    capaViaje.clearLayers();
+  };
+
+  // ---------------------------------------------------------------
+  // CLIC EN EL MAPA (pantalla de cotización)
+  // ---------------------------------------------------------------
+  map.on('click', function (e) {
+    if (!modoSeleccion || !window.javaBridge || consultando) return;
+    var tipo = modoSeleccion;
+    consultando = true;
+
+    // busca la calle más cercana al punto donde se hizo clic
+    fetch(OSRM + '/nearest/v1/driving/' + e.latlng.lng + ',' + e.latlng.lat)
+      .then(function (r) { return r.json(); })
+      .then(function (datos) {
+        consultando = false;
+        if (datos.code !== 'Ok' || datos.waypoints[0].distance > MAX_DISTANCIA_CALLE) {
+          aviso('Ese punto no está sobre una calle, probá de nuevo');
+          return;   // el modo de selección sigue activo
+        }
+        var lon = datos.waypoints[0].location[0];   // OSRM devuelve [lon, lat]
+        var lat = datos.waypoints[0].location[1];
+
+        // se manda a Java el punto ya "pegado" a la calle
+        window.javaBridge.seleccionarPunto(tipo, lat, lon);
+
+        if (marcadores[tipo]) map.removeLayer(marcadores[tipo]);
+        marcadores[tipo] = L.marker([lat, lon]).addTo(map);
+
+        document.getElementById('mensaje').style.display = 'none';
+        modoSeleccion = null;
+        dibujarRuta();   // si ya están origen y destino, traza el recorrido
+      })
+      .catch(function () {
+        consultando = false;
+        aviso('No se pudo consultar el servicio de calles (¿hay internet?)');
+      });
+  });
+
+  setTimeout(function () { map.invalidateSize(false); }, 300);
+  setTimeout(function () { map.invalidateSize(false); }, 1000);
+</script>
+</body>
+</html>
