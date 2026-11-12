@@ -17,6 +17,9 @@ import java.io.PrintWriter;
 //import logica.GeneradorUbicacion;
 
 
+/**
+ * DAO que obtiene y guarda los vehículos en un archivo de texto.
+ */
 public class VehiculoDaoTxt implements VehiculoDAO {
 
 	private static final int CAMPOS_MINIMOS = 6;	// Son los datos minimos ya que dicho vehiculo debe tener almenos un servicio
@@ -24,11 +27,22 @@ public class VehiculoDaoTxt implements VehiculoDAO {
 	private final String archivo;	// Se usa para almacenar el nombre del archivo
 	//private final GeneradorUbicacion generador;//se usara para la cracion de la ubcacion de dicho vehiculo ya que este no cuenta con una propia desde el txt
 
+	/**
+	 * Crea el DAO con el archivo a utilizar.
+	 *
+	 * @param archivo ruta del archivo de vehículos
+	 */
 	public VehiculoDaoTxt(String archivo /*, GeneradorUbicacion generador*/) {
 		this.archivo = archivo;
 		//this.generador = generador;
 	}
 
+	/**
+	 * Lee todos los vehículos del archivo.
+	 *
+	 * @return mapa de vehículos cuya clave es la patente
+	 * @throws ArchivoInvalidoException si una línea no es válida o hay una patente repetida
+	 */
 	@Override
 	public Map<String, VehiculoDTO> obtenerTodos() {
 		Map<String, VehiculoDTO> vehiculos = new LinkedHashMap<>(); // Se crea un map para almacenar todos los vehiculos de manera que se pueda buscar usando como llave su matricula
@@ -46,6 +60,13 @@ public class VehiculoDaoTxt implements VehiculoDAO {
 		return vehiculos;	// Retorna el map de vehiculos cargados del txt o almenos los que son validos
 	}
 
+	/**
+	 * Convierte una línea del archivo en un vehículo.
+	 *
+	 * @param linea línea con los campos del vehículo
+	 * @return el vehículo creado
+	 * @throws ArchivoInvalidoException si faltan campos o algún valor no es válido
+	 */
 	private VehiculoDTO crear(Linea linea) {
 		List<String> c = linea.getCampos();	// Se le asigna dicha linea del txt a una nueva list
 		if (c.size() < CAMPOS_MINIMOS) {	// Valida que tenga los campos minimos requeridos
@@ -81,6 +102,13 @@ public class VehiculoDaoTxt implements VehiculoDAO {
 		}
 	}
 	
+	/**
+	 * Agrega un vehículo al final del archivo.
+	 *
+	 * @param vehiculo vehículo a guardar
+	 * @throws IllegalArgumentException si los datos contienen {@code ;} o ya existe un vehículo con esa patente
+	 * @throws IllegalStateException si no se puede escribir el archivo
+	 */
 	@Override
 	public void guardar(VehiculoDTO vehiculo) {
 		if (vehiculo.getPatente().contains(";") || vehiculo.getModelo().contains(";")) {

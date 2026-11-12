@@ -7,27 +7,27 @@
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.text.Font?>
 
-<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="495.0" prefWidth="609.0" style="-fx-background-image: #2196f3;" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controladores.Conductor_Controlador">
+<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="495.0" prefWidth="609.0" style="-fx-background-image: #2196f3;" xmlns="http://javafx.com/javafx/26" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controladores.Conductor_Controlador">
    <children>
-      <Label layoutX="264.0" layoutY="74.0" prefHeight="18.0" prefWidth="77.0" text="Iniciar sesion">
+      <Label layoutX="264.0" layoutY="74.0" prefHeight="18.0" prefWidth="77.0" text="%conductor.titulo">
          <font>
             <Font name="System Bold" size="12.0" />
          </font></Label>
-      <TextField fx:id="TextoMail" layoutX="146.0" layoutY="120.0" prefHeight="26.0" prefWidth="306.0" promptText="email" />
-      <TextField fx:id="TextoNombre" layoutX="146.0" layoutY="213.0" prefHeight="26.0" prefWidth="306.0" promptText="nombre" />
-      <TextField fx:id="TextoTelefono" layoutX="146.0" layoutY="260.0" prefHeight="26.0" prefWidth="306.0" promptText="telefono" />
-      <TextField fx:id="TextoLicenciaConducir" layoutX="146.0" layoutY="297.0" prefHeight="26.0" prefWidth="306.0" promptText="licencia conducir" />
-      <Label layoutX="246.0" layoutY="176.0" prefHeight="18.0" prefWidth="117.0" text="Crear nuevo usuario">
+      <TextField fx:id="TextoMail" layoutX="146.0" layoutY="120.0" prefHeight="26.0" prefWidth="306.0" promptText="%conductor.email" />
+      <TextField fx:id="TextoNombre" layoutX="146.0" layoutY="213.0" prefHeight="26.0" prefWidth="306.0" promptText="%conductor.nombre" />
+      <TextField fx:id="TextoTelefono" layoutX="146.0" layoutY="260.0" prefHeight="26.0" prefWidth="306.0" promptText="%conductor.telefono" />
+      <TextField fx:id="TextoLicenciaConducir" layoutX="146.0" layoutY="297.0" prefHeight="26.0" prefWidth="306.0" promptText="%conductor.licencia" />
+      <Label layoutX="246.0" layoutY="176.0" prefHeight="18.0" prefWidth="117.0" text="%conductor.nuevo">
          <font>
             <Font name="System Bold" size="12.0" />
          </font>
       </Label>
       <HBox layoutX="193.0" layoutY="351.0" prefHeight="26.0" prefWidth="220.0" spacing="5.0">
          <children>
-            <Button mnemonicParsing="false" onAction="#onIngresar" prefHeight="26.0" prefWidth="107.0" style="-fx-background-color: #2196f3;" text="ingresar" />
-            <Button mnemonicParsing="false" onAction="#onCrear" prefHeight="40.0" prefWidth="114.0" style="-fx-background-color: #2196f3;" text="crear usuario" />
+            <Button mnemonicParsing="false" onAction="#onIngresar" prefHeight="26.0" prefWidth="107.0" style="-fx-background-color: #2196f3;" text="%conductor.ingresar" />
+            <Button mnemonicParsing="false" onAction="#onCrear" prefHeight="40.0" prefWidth="114.0" style="-fx-background-color: #2196f3;" text="%conductor.crearUsuario" />
          </children>
       </HBox>
-      <Label fx:id="errorMensaje" alignment="CENTER" layoutX="286.0" layoutY="356.0" textFill="RED" />
+      <Label fx:id="errorMensaje" alignment="CENTER" layoutX="60.0" layoutY="392.0" prefHeight="35.0" prefWidth="486.0" textFill="RED" />
    </children>
 </AnchorPane>

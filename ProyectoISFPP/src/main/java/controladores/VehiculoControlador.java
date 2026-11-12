@@ -5,6 +5,7 @@ import aplicacion.Navegador;
 import enums.CategoriaVehiculo;
 import enums.TipoServicio;
 import enums.TipoVehiculo;
+import internacionalizacion.I18N;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.ComboBox;
@@ -14,6 +15,10 @@ import logica.SistemaGuardado;
 import modelo.Usuario;
 import modelo.Vehiculo;
 
+/**
+ * Controlador de la pantalla de registro de vehículos. Se usa tanto al registrar un conductor nuevo
+ * como al agregar un vehículo a un conductor existente.
+ */
 public class VehiculoControlador implements Controlador {
 
 	private Navegador navegador;
@@ -41,6 +46,12 @@ public class VehiculoControlador implements Controlador {
     @FXML
     private Label mensajel;
 
+	/**
+	 * Guarda los datos compartidos y carga las opciones de los selectores.
+	 *
+	 * @param navegador navegador que cambia de pantalla
+	 * @param contexto datos compartidos entre los controladores
+	 */
     @Override
 	public void init(Navegador navegador, Contexto contexto) {
     	this.navegador = navegador;
@@ -49,12 +60,21 @@ public class VehiculoControlador implements Controlador {
 		cargarCombobox();
 	}
     
+    /**
+     * Carga en los selectores los tipos de servicio, las categorías y los tipos de vehículo.
+     */
     private void cargarCombobox() {
     	cmbTipoServicio.getItems().addAll(TipoServicio.values());
     	cmbCategoria.getItems().addAll(CategoriaVehiculo.values());
     	cmbTipoVehiculo.getItems().addAll(TipoVehiculo.values());
     }
     
+    /**
+     * Vuelve a la pantalla anterior: al registro de conductor si el registro es nuevo,
+     * o a la pantalla de viajes del conductor si no lo es.
+     *
+     * @param event evento del botón de volver
+     */
     @FXML
     void OnVolver(ActionEvent event) {
     	if(esRegistroNuevo()) {
@@ -66,17 +86,28 @@ public class VehiculoControlador implements Controlador {
 
     }
     
+    /**
+     * Indica si se está registrando un conductor nuevo.
+     *
+     * @return {@code true} si hay un usuario pendiente de registro
+     */
     private boolean esRegistroNuevo() {
 		return contexto.getUsuarioPendiente() != null;
 	}
 
+    /**
+     * Crea el vehículo con los datos ingresados y lo registra: junto con el conductor nuevo, o agregado
+     * a un conductor existente. Muestra un error si falta alguna selección o los datos no son válidos.
+     *
+     * @param event evento del botón de finalizar registro
+     */
     @FXML
     void onFinalizarRegistro(ActionEvent event) {
     	mensajel.setText("");
 		try {
 			if (cmbTipoVehiculo.getValue() == null || cmbCategoria.getValue() == null
 					|| cmbTipoServicio.getValue() == null) {
-				mensajel.setText("completá tipo de vehículo, categoría y tipo de servicio");
+				mensajel.setText(I18N.texto("vehiculo.error.seleccion"));
 				return;
 			}
 
@@ -105,11 +136,17 @@ public class VehiculoControlador implements Controlador {
 		}
     }
     
+    /**
+     * Lee la capacidad de pasajeros escrita en pantalla.
+     *
+     * @return la capacidad como número entero
+     * @throws IllegalArgumentException si el texto no es un número
+     */
     private int leerCapacidad() {
 		try {
 			return Integer.parseInt(TextoCapacidad.getText().trim());
 		} catch (NumberFormatException e) {
-			throw new IllegalArgumentException("la capacidad tiene que ser un número entero");
+			throw new IllegalArgumentException(I18N.texto("vehiculo.error.capacidad"));
 		}
 	}
 }

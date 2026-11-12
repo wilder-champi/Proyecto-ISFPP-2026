@@ -10,21 +10,21 @@
 
 <AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="493.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/26" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controladores.VehiculoControlador">
    <children>
-      <Label layoutX="66.0" layoutY="40.0" prefHeight="26.0" prefWidth="194.0" text="Datos del Vehiculo">
+      <Label layoutX="66.0" layoutY="40.0" prefHeight="26.0" prefWidth="194.0" text="%vehiculo.titulo">
          <font>
             <Font size="19.0" />
          </font>
       </Label>
-      <TextField fx:id="TextoPatente" layoutX="59.0" layoutY="120.0" prefHeight="26.0" prefWidth="248.0" promptText="patente" />
-      <TextField fx:id="TextoModelo" layoutX="59.0" layoutY="161.0" prefHeight="26.0" prefWidth="248.0" promptText="modelo" />
-      <TextField fx:id="TextoCapacidad" layoutX="59.0" layoutY="203.0" prefHeight="26.0" prefWidth="248.0" promptText="Capacidad" />
-      <Label layoutX="62.0" layoutY="75.0" prefHeight="18.0" prefWidth="203.0" text="Ingrese la Informacion de su vehiculo" />
-      <ComboBox fx:id="cmbTipoVehiculo" layoutX="59.0" layoutY="255.0" prefHeight="26.0" prefWidth="125.0" promptText="Tipo Vehiculo" />
-      <ComboBox fx:id="cmbCategoria" layoutX="59.0" layoutY="298.0" prefHeight="26.0" prefWidth="126.0" promptText="Categoria" />
+      <TextField fx:id="TextoPatente" layoutX="59.0" layoutY="120.0" prefHeight="26.0" prefWidth="248.0" promptText="%vehiculo.patente" />
+      <TextField fx:id="TextoModelo" layoutX="59.0" layoutY="161.0" prefHeight="26.0" prefWidth="248.0" promptText="%vehiculo.modelo" />
+      <TextField fx:id="TextoCapacidad" layoutX="59.0" layoutY="203.0" prefHeight="26.0" prefWidth="248.0" promptText="%vehiculo.capacidad" />
+      <Label layoutX="62.0" layoutY="75.0" prefHeight="18.0" prefWidth="203.0" text="%vehiculo.instruccion" />
+      <ComboBox fx:id="cmbTipoVehiculo" layoutX="59.0" layoutY="255.0" prefHeight="26.0" prefWidth="125.0" promptText="%vehiculo.tipo" />
+      <ComboBox fx:id="cmbCategoria" layoutX="59.0" layoutY="298.0" prefHeight="26.0" prefWidth="126.0" promptText="%vehiculo.categoria" />
       <HBox layoutX="59.0" layoutY="373.0" prefHeight="28.0" prefWidth="294.0" spacing="15.0" />
-      <ComboBox fx:id="cmbTipoServicio" layoutX="59.0" layoutY="347.0" prefWidth="150.0" promptText="Tipo de Servicio" />
-      <Button layoutX="48.0" layoutY="402.0" mnemonicParsing="false" onAction="#OnVolver" prefHeight="26.0" prefWidth="149.0" text="Volver" />
-      <Button layoutX="242.0" layoutY="402.0" mnemonicParsing="false" onAction="#onFinalizarRegistro" prefHeight="26.0" prefWidth="154.0" text="Finalizar Registro" />
+      <ComboBox fx:id="cmbTipoServicio" layoutX="59.0" layoutY="347.0" prefWidth="150.0" promptText="%vehiculo.tipoServicio" />
+      <Button layoutX="48.0" layoutY="402.0" mnemonicParsing="false" onAction="#OnVolver" prefHeight="26.0" prefWidth="149.0" text="%vehiculo.volver" />
+      <Button layoutX="242.0" layoutY="402.0" mnemonicParsing="false" onAction="#onFinalizarRegistro" prefHeight="26.0" prefWidth="154.0" text="%vehiculo.finalizar" />
       <Label fx:id="mensajel" layoutX="52.0" layoutY="446.0" />
    </children>
 </AnchorPane>

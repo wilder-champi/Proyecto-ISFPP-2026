@@ -10,12 +10,26 @@ import datos.dao.txt.TxtDAOFactory;
 
 //import logica.GeneradorUbicacion;
 
+/**
+ * Lee el archivo de configuración y crea la fábrica de DAO correspondiente al tipo de persistencia
+ * indicado (archivos de texto o base de datos).
+ */
 public class DAOLoader {
 
+	/**
+	 * Nombre del archivo de configuración que se usa por defecto.
+	 */
 	public static final String ARCHIVO_POR_DEFECTO = "config.properties"; // Asigno al atributo el nombre del archivo
 
 	private static DAOFactory fabrica; // Guarda la fabrica ya creada para no volver a leer el archivo
 
+	/**
+	 * Devuelve la fábrica de DAO. La primera vez la crea con el archivo de configuración por defecto
+	 * y luego reutiliza la misma.
+	 *
+	 * @return la fábrica de DAO configurada
+	 * @throws IllegalStateException si no se puede leer la configuración o falta algún valor
+	 */
 	// Si todavia no hay fabrica le delega a crearFactory el archivo por defecto para que la cree
 	public static DAOFactory getFactory() {
 		if (fabrica == null) {
@@ -24,6 +38,14 @@ public class DAOLoader {
 		return fabrica;
 	}
 
+	/**
+	 * Crea una fábrica de DAO a partir de un archivo de configuración. Con {@code persistencia=TXT}
+	 * (valor por defecto) usa archivos de texto y con {@code persistencia=BD} usa la base de datos PostgreSQL.
+	 *
+	 * @param archivo ruta del archivo de configuración
+	 * @return la fábrica de DAO correspondiente
+	 * @throws IllegalStateException si no se puede leer el archivo, falta una clave o el tipo de persistencia no está soportado
+	 */
 	// Recibe el nombre del archivo (el por defecto o uno desde un test) y con lo que lee crea la fabrica de txt
 	public static DAOFactory crearFactory(String archivo) {
 		Properties diccionario = cargar(archivo);
@@ -60,6 +82,13 @@ public class DAOLoader {
             
  }
 
+	/**
+	 * Carga el archivo de configuración en un conjunto de propiedades.
+	 *
+	 * @param archivo ruta del archivo de configuración
+	 * @return las propiedades leídas del archivo
+	 * @throws IllegalStateException si no se puede leer el archivo
+	 */
 	private static Properties cargar(String archivo) {
 		Properties diccionario = new Properties(); // Creo un diccionario que almacena clave valor que se usara para que lea el archivo
 		try (FileInputStream entrada = new FileInputStream(archivo)) { // Abre el archivo que se le pase o desde getFactory o desde un test
@@ -70,6 +99,14 @@ public class DAOLoader {
 		return diccionario;
 	}
 
+	/**
+	 * Devuelve el valor de una propiedad, sin espacios en los extremos.
+	 *
+	 * @param diccionario propiedades cargadas de la configuración
+	 * @param clave nombre de la propiedad buscada
+	 * @return el valor de la propiedad
+	 * @throws IllegalStateException si la propiedad falta o está vacía
+	 */
 	// Devuelve el valor de una propiedad o avisa cual falta
 	private static String texto(Properties diccionario, String clave) {
 		String valor = diccionario.getProperty(clave); // Se le asigna el valor que esta guardado en el diccionario a partir de la clave

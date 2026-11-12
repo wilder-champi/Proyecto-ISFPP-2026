@@ -9,23 +9,23 @@
 
 <AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="445.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/26" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controladores.ClienteControlador">
    <children>
-      <Label alignment="CENTER" layoutX="131.0" layoutY="40.0" prefHeight="25.0" prefWidth="337.0" text="inicio de sesion o crear un usuario">
+      <Label alignment="CENTER" layoutX="131.0" layoutY="40.0" prefHeight="25.0" prefWidth="337.0" text="%cliente.titulo">
          <font>
             <Font name="System Bold" size="18.0" />
          </font>
       </Label>
-      <Label alignment="CENTER" layoutX="135.0" layoutY="96.0" prefHeight="17.0" prefWidth="301.0" text="tu email" />
-      <Label alignment="CENTER" layoutX="199.0" layoutY="200.0" prefHeight="17.0" prefWidth="174.0" text="agregar si sos nuevo" />
-      <TextField fx:id="TextoMail" layoutX="131.0" layoutY="131.0" prefHeight="25.0" prefWidth="337.0" promptText="ejemplo:(nombre@email.com)" />
-      <TextField fx:id="TextoNombre" layoutX="131.0" layoutY="224.0" prefHeight="25.0" prefWidth="337.0" promptText="nombre" />
-      <TextField fx:id="TextoTelefono" layoutX="131.0" layoutY="264.0" prefHeight="25.0" prefWidth="337.0" promptText="telefono" />
+      <Label alignment="CENTER" layoutX="135.0" layoutY="96.0" prefHeight="17.0" prefWidth="301.0" text="%cliente.email" />
+      <Label alignment="CENTER" layoutX="199.0" layoutY="200.0" prefHeight="17.0" prefWidth="174.0" text="%cliente.nuevo" />
+      <TextField fx:id="TextoMail" layoutX="131.0" layoutY="131.0" prefHeight="25.0" prefWidth="337.0" promptText="%cliente.ejemploEmail" />
+      <TextField fx:id="TextoNombre" layoutX="131.0" layoutY="224.0" prefHeight="25.0" prefWidth="337.0" promptText="%cliente.nombre" />
+      <TextField fx:id="TextoTelefono" layoutX="131.0" layoutY="264.0" prefHeight="25.0" prefWidth="337.0" promptText="%cliente.telefono" />
       <HBox layoutX="200.0" layoutY="300.0" prefHeight="27.0" prefWidth="200.0">
          <children>
-            <Button mnemonicParsing="false" onAction="#onIngresar" prefHeight="25.0" prefWidth="93.0" text="ingresar" />
-            <Button mnemonicParsing="false" onAction="#onCrear" prefHeight="25.0" prefWidth="106.0" text="crear usuario" />
+            <Button mnemonicParsing="false" onAction="#onIngresar" prefHeight="25.0" prefWidth="93.0" text="%cliente.ingresar" />
+            <Button mnemonicParsing="false" onAction="#onCrear" prefHeight="25.0" prefWidth="106.0" text="%cliente.crearUsuario" />
          </children>
       </HBox>
-      <Label fx:id="errorMensaje" alignment="CENTER" layoutX="286.0" layoutY="356.0" textFill="RED" />
-      <Button layoutX="83.0" layoutY="361.0" mnemonicParsing="false" onAction="#onsalir" text="salir" />
+      <Label fx:id="errorMensaje" alignment="CENTER" layoutX="126.0" layoutY="356.0" prefHeight="17.0" prefWidth="352.0" textFill="RED" />
+      <Button layoutX="50.0" layoutY="380.0" mnemonicParsing="false" onAction="#onsalir" text="%cliente.salir" />
    </children>
 </AnchorPane>

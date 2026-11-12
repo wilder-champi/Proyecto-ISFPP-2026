@@ -11,16 +11,33 @@ public class ArchivoInvalidoException extends RuntimeException {
 	private final String archivo;
 	private final int numeroLinea;
 
+	/**
+	 * Crea la excepción indicando dónde está el error.
+	 *
+	 * @param archivo nombre del archivo con el error
+	 * @param numeroLinea número de la línea con el error
+	 * @param motivo descripción del problema
+	 */
 	public ArchivoInvalidoException(String archivo, int numeroLinea, String motivo) {
 		super("error en " + archivo + ", linea " + numeroLinea + ": " + motivo);
 		this.archivo = archivo;
 		this.numeroLinea = numeroLinea;
 	}
 
+	/**
+	 * Devuelve el archivo donde ocurrió el error.
+	 *
+	 * @return nombre del archivo
+	 */
 	public String getArchivo() {
 		return archivo;
 	}
 
+	/**
+	 * Devuelve la línea donde ocurrió el error.
+	 *
+	 * @return número de línea
+	 */
 	public int getNumeroLinea() {
 		return numeroLinea;
 	}

@@ -6,8 +6,19 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
 
+/**
+ * Lee archivos de texto y los separa en líneas con sus campos. Ignora las líneas vacías
+ * y las que empiezan con {@code #}.
+ */
 public class LectorArchivo {
 
+	/**
+	 * Lee un archivo de texto y devuelve sus líneas válidas, con los campos separados por {@code ;}.
+	 *
+	 * @param nombreArchivo ruta del archivo a leer
+	 * @return lista de líneas con su número y sus campos
+	 * @throws IllegalStateException si no se encuentra el archivo
+	 */
 	public static List<Linea> leer(String nombreArchivo) {
 		List<Linea> lineas = new ArrayList<>();	//Creamos una lista para guardar los objetos linea o las lineas que se pudieron guardar
 		try {
@@ -30,6 +41,12 @@ public class LectorArchivo {
 	}
 	
 	
+	/**
+	 * Separa una línea en campos usando {@code ;} y descarta los campos vacíos.
+	 *
+	 * @param texto línea a separar
+	 * @return lista de campos sin espacios en los extremos
+	 */
 	private static List<String> separarCampos(String texto) {
 		
 		List<String> campos = new ArrayList<>();	//Crea una lista para guardar lo valores de la linea

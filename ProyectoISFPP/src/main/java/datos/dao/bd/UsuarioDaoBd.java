@@ -12,15 +12,29 @@ import java.util.Map;
 import datos.dao.UsuarioDAO;
 import datos.dto.UsuarioDTO;
 
+/**
+ * DAO que obtiene los usuarios desde la base de datos. Por el momento es de solo lectura.
+ */
 public class UsuarioDaoBd implements UsuarioDAO {
 
 	// se agrego la conexion
 	private final ConexionBD conexion;
 
+	/**
+	 * Crea el DAO con la conexión a utilizar.
+	 *
+	 * @param conexion conexión a la base de datos
+	 */
 	public UsuarioDaoBd(ConexionBD conexion) {
 		this.conexion = conexion;
 	}
 
+	/**
+	 * Consulta todos los usuarios de la base de datos junto con las patentes de sus vehículos.
+	 *
+	 * @return lista de usuarios, cada uno con sus patentes
+	 * @throws IllegalStateException si falla la consulta
+	 */
 	@Override
 	public List<UsuarioDTO> obtenerTodos() {
 
@@ -73,6 +87,12 @@ public class UsuarioDaoBd implements UsuarioDAO {
 		return new ArrayList<>(usuarios.values());
 	}
 
+	/**
+	 * No está soportado: la base de datos es de solo lectura.
+	 *
+	 * @param usuario usuario a guardar
+	 * @throws UnsupportedOperationException siempre
+	 */
 	@Override
 	public void guardar(UsuarioDTO usuario) {
 		// como aclaracion este metodo no se puede realisar ya que en si como la bd es
@@ -81,6 +101,12 @@ public class UsuarioDaoBd implements UsuarioDAO {
 		throw new UnsupportedOperationException("la base de datos es de solo lectura por el momento");
 	}
 
+	/**
+	 * No está soportado: la base de datos es de solo lectura.
+	 *
+	 * @param usuarios usuarios a guardar
+	 * @throws UnsupportedOperationException siempre
+	 */
 	@Override
 	public void guardarTodos(List<UsuarioDTO> usuarios) {
 		// TODO Auto-generated method stub

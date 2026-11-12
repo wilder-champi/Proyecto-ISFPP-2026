@@ -13,12 +13,19 @@ import modelo.Ubicacion;
 import modelo.Usuario;
 import modelo.Viaje;
 
+/**
+ * Interfaz de consola de la aplicación. Permite registrarse, iniciar sesión, cambiar de rol y,
+ * como cliente, solicitar viajes, verlos y cancelarlos. El menú del conductor todavía está en desarrollo.
+ */
 public class MenuConsola {
 
 	private Scanner teclado;
 	private SistemaGuardado sistema;
 	private Usuario usuarioActual;
 
+	/**
+	 * Crea el menú: carga el sistema, prepara la lectura por teclado y deja sin usuario actual.
+	 */
 	public MenuConsola() {
 		sistema = new SistemaGuardado();
 		teclado = new Scanner(System.in);
@@ -26,6 +33,11 @@ public class MenuConsola {
 
 	}
 
+	/**
+	 * Punto de entrada de la aplicación de consola.
+	 *
+	 * @param args argumentos de la línea de comandos
+	 */
 	//Aplicacion
 	public static void main(String[] args) {
 		new MenuConsola().iniciar();
@@ -33,6 +45,9 @@ public class MenuConsola {
 
 	// ---------- MENU PRINCIPAL ----------
 
+	/**
+	 * Muestra el menú principal y atiende las opciones hasta que se elige salir.
+	 */
 	public void iniciar() {
 		int opcion;
 		do {
@@ -58,6 +73,10 @@ public class MenuConsola {
 		} while (opcion != 0);
 	}
 
+	/**
+	 * Pide los datos de un usuario nuevo por teclado y lo registra. Muestra un error si hay datos vacíos,
+	 * con el carácter {@code ;} o inválidos.
+	 */
 //Por ahora solo registro usuarios en memoria.
 //#nombre;telefono;email;licenciaConducir;patente;...
 	private void registrarse() {
@@ -106,6 +125,9 @@ public class MenuConsola {
 		*/
 	}
 	
+	/**
+	 * Pide un email por teclado y, si existe un usuario con ese email, inicia su sesión y muestra su menú.
+	 */
 	//Este metodo lo que hace es buscar si el usuario existe y si no avisar que no esta registrado!
 	private void iniciarSesion() {
 		interfazConsola.mostrarMensaje("Ingrese un email:");
@@ -144,6 +166,9 @@ public class MenuConsola {
 
 	// ---------- MENU DEL USUARIO ----------
 
+	/**
+	 * Muestra el menú del usuario con sesión iniciada, que permite cambiar de rol o ir al menú de su rol activo.
+	 */
 	private void menuUsuario() {
 		int opcion;
 		do {
@@ -174,6 +199,9 @@ public class MenuConsola {
 		usuarioActual = null;
 	}
 
+	/**
+	 * Cambia el rol activo del usuario: de cliente a conductor o de conductor a cliente.
+	 */
 	private void cambiarRol() {
 		// Si esta como CLIENTE intenta pasar a CONDUCTOR y viceversa
 		RolUsuario nuevo = (usuarioActual.getRolActivo() == RolUsuario.CLIENTE) ? RolUsuario.CONDUCTOR
@@ -188,6 +216,9 @@ public class MenuConsola {
 
 	// ---------- MENU CLIENTE ----------
 
+	/**
+	 * Muestra el menú del cliente: solicitar viaje, cancelar viaje y ver sus viajes.
+	 */
 	private void menuCliente() {
 		int opcion;
 		do {
@@ -217,6 +248,10 @@ public class MenuConsola {
 		} while (opcion != 0);
 	}
 
+	/**
+	 * Solicita un viaje: el usuario elige un servicio y el origen y el destino se generan al azar.
+	 * El viaje se agrega a los pendientes.
+	 */
 	private void solicitarViaje() {
 		// 1) mostrar servicios numerados
 		for (int i = 0; i < sistema.getServicios().size(); i++) {
@@ -252,6 +287,9 @@ public class MenuConsola {
 
 	// ---------- MENU CONDUCTOR ----------
 
+	/**
+	 * Muestra el menú del conductor. Sus opciones todavía están pendientes de implementar.
+	 */
 	private void menuConductor() {
 		int opcion;
 		do {
@@ -285,6 +323,12 @@ public class MenuConsola {
 	}
 
 
+	/**
+	 * Lee un número entero por teclado.
+	 *
+	 * @param mensaje texto que se muestra antes de leer
+	 * @return el número ingresado, o -1 si lo escrito no es un número
+	 */
 	// Lee un numero sin que explote si escriben letras
 	private int leerEntero(String mensaje) {
 		System.out.print(mensaje);
@@ -296,6 +340,9 @@ public class MenuConsola {
 	}
 	
 	
+	/**
+	 * Muestra los viajes del cliente con su id, su estado y su servicio.
+	 */
 	private void verMisViajes() {
 		List<Viaje> viajes = usuarioActual.getCliente().getViajes();
 		
@@ -311,6 +358,9 @@ public class MenuConsola {
 			interfazConsola.mostrarMensaje("Servicio: " + v.getServicio().getNombre());
 		}
 	}
+	/**
+	 * Cancela el viaje activo del cliente, pidiendo el motivo por teclado, y muestra el costo de cancelación si corresponde.
+	 */
 	private void cancelarViajeCliente() {
 		Viaje viajeActivo = null;
 		for (Viaje v : usuarioActual.getCliente().getViajes()) {

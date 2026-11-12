@@ -20,6 +20,13 @@ public class ConexionBD {
     private final String usuario;
     private final String password;
 
+    /**
+     * Crea la conexión con los datos necesarios.
+     *
+     * @param url dirección JDBC de la base de datos
+     * @param usuario usuario de la base de datos
+     * @param password contraseña de la base de datos
+     */
     //recibe los datos de conexion
     public ConexionBD(String url, String usuario, String password) {
         this.url = url;
@@ -27,6 +34,12 @@ public class ConexionBD {
         this.password = password;
     }
 
+    /**
+     * Abre y devuelve una conexión a la base de datos.
+     *
+     * @return una nueva conexión
+     * @throws SQLException si no se puede establecer la conexión
+     */
     //habre y devuelve una conexion a posgrest 
     public Connection obtenerConexion() throws SQLException {
         return DriverManager.getConnection(url, usuario, password);

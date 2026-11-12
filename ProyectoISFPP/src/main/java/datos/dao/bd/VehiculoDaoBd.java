@@ -15,15 +15,30 @@ import enums.CategoriaVehiculo;
 import enums.TipoServicio;
 import enums.TipoVehiculo;
 
+/**
+ * DAO que obtiene los vehículos desde la base de datos. Por el momento es de solo lectura.
+ */
 public class VehiculoDaoBd implements VehiculoDAO {
 
 	// se agrego la conexion
 	private final ConexionBD conexion;
 
+	/**
+	 * Crea el DAO con la conexión a utilizar.
+	 *
+	 * @param conexion conexión a la base de datos
+	 */
 	public VehiculoDaoBd(ConexionBD conexion) {
 		this.conexion = conexion;
 	}
 
+	/**
+	 * Consulta todos los vehículos de la base de datos, ordenados por patente.
+	 *
+	 * @return mapa de vehículos cuya clave es la patente
+	 * @throws IllegalArgumentException si el valor de los tipos de servicio no es válido
+	 * @throws IllegalStateException si falla la consulta
+	 */
 	@Override
 	public Map<String, VehiculoDTO> obtenerTodos() {
 
@@ -91,6 +106,12 @@ public class VehiculoDaoBd implements VehiculoDAO {
 		return vehiculos;
 	}
 
+	/**
+	 * No está soportado: la base de datos es de solo lectura.
+	 *
+	 * @param vehiculo vehículo a guardar
+	 * @throws UnsupportedOperationException siempre
+	 */
 	@Override
 	public void guardar(VehiculoDTO vehiculo) {
 		//el bd es compartida con otros equipos por eso es de solo lectura

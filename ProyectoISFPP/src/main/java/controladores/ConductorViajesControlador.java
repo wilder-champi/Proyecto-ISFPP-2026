@@ -6,6 +6,7 @@ import aplicacion.Contexto;
 import aplicacion.Navegador;
 import enums.EstadoConductor;
 import enums.TipoServicio;
+import internacionalizacion.I18N;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.CheckBox;
@@ -26,6 +27,10 @@ import javafx.scene.web.WebEngine;
 import javafx.scene.web.WebView;
 import modelo.Ubicacion;
 
+/**
+ * Controlador de la pantalla del conductor: permite cambiar de vehículo, elegir los servicios que presta,
+ * cambiar su estado y ver y aceptar los viajes pendientes, que se muestran también en el mapa.
+ */
 public class ConductorViajesControlador implements Controlador {
 
 	private Navegador navegador;
@@ -67,6 +72,12 @@ public class ConductorViajesControlador implements Controlador {
     private boolean mapaListo = false;
 
     
+	/**
+	 * Guarda los datos compartidos y prepara la pantalla: tabla, vehículos, servicios, viajes pendientes, estado y mapa.
+	 *
+	 * @param navegador navegador que cambia de pantalla
+	 * @param contexto datos compartidos entre los controladores
+	 */
     @Override
 	public void init(Navegador navegador, Contexto contexto) {//usamos int para las asignaciones necesariaspara que la vista funcione adecuadamente
     	this.navegador = navegador;//asigno el navegador que me pedmite moverme entre vistas
@@ -80,6 +91,9 @@ public class ConductorViajesControlador implements Controlador {
     	configurarSeleccion();
 	}
     
+    /**
+     * Carga en la tabla los viajes pendientes del sistema.
+     */
     private void cargarViajesPendientes() {//se utiliza para cargar en la tabla los viajes pendientes o disponibles
     	tblAlternativas.getItems().clear();//limiamos los items de la tabla
     	for (Viaje v : contexto.getSistema().getViajesPendientes()) {//exploramso todos los viajes pendientes que se guardarond e manera de compilacion en el porgrama
@@ -87,6 +101,9 @@ public class ConductorViajesControlador implements Controlador {
     	}
     }
     	
+    /**
+     * Indica de qué atributo de {@link FilaViaje} sale el contenido de cada columna de la tabla.
+     */
     private void configurarTabla() {
     	colServicio.setCellValueFactory(new PropertyValueFactory<>("servicio"));
 		colPrecio.setCellValueFactory(new PropertyValueFactory<>("precio"));
@@ -94,12 +111,18 @@ public class ConductorViajesControlador implements Controlador {
 		colKilometro.setCellValueFactory(new PropertyValueFactory<>("kilometro"));
     }
     
+    /**
+     * Carga en el selector los vehículos del conductor y marca el vehículo actual.
+     */
     private void cargarVehiculos() {//se usa para cargar en el combobox lso vehiculos del usuario añadiendolos como items
     	cmbVehiculos.getItems().addAll(contexto.getUsuarioActual().getConductor().getVehiculos());
     	cmbVehiculos.setConverter(new ConversorVehiculo());//pasamos en si los items de manera convertida como si es un auto o moto con la calse conversor vehiculo
     	cmbVehiculos.setValue(contexto.getVehiculoActual()); // deja marcado el actual vehiculo
     }
     
+    /**
+     * Marca las casillas de los servicios (envíos y pasajeros) que presta el vehículo actual.
+     */
     private void mostrarServiciosDelVehiculo() {
     	Vehiculo vehiculo = contexto.getVehiculoActual();
     	if (vehiculo == null) {
@@ -109,10 +132,21 @@ public class ConductorViajesControlador implements Controlador {
     	chkPasajeros.setSelected(vehiculo.getTipoServicios().contains(TipoServicio.PASAJEROS));
     }
     
+    /**
+     * Pasa a la pantalla de registro de un vehículo nuevo.
+     *
+     * @param event evento del botón de agregar vehículo
+     */
     @FXML
     void onAgregarVehiculo(ActionEvent event) {
     	navegador.irA("/vistas/Vehiculo.fxml");
     }
+    /**
+     * Cambia el vehículo activo del conductor por el elegido en el selector. Si no se puede
+     * (por ejemplo, porque no está fuera de servicio) muestra el error y deja el vehículo anterior.
+     *
+     * @param event evento del selector de vehículos
+     */
     @FXML
     void onCambiarVehiculo(ActionEvent event) {
         Vehiculo elegido = cmbVehiculos.getValue();
@@ -130,6 +164,11 @@ public class ConductorViajesControlador implements Controlador {
         }
     }
 
+    /**
+     * Alterna el estado del conductor entre disponible y fuera de servicio. No se puede cambiar mientras está en viaje.
+     *
+     * @param event evento del botón de estado
+     */
     @FXML
     void onEstadoConductor(ActionEvent event) {
     	mensajel.setText("");
@@ -137,7 +176,7 @@ public class ConductorViajesControlador implements Controlador {
     	EstadoConductor actual = conductor.getEstadoConductor();
 
     	if (actual == EstadoConductor.VIAJE_A_ORIGEN || actual == EstadoConductor.VIAJE_A_DESTINO) {
-    		mensajel.setText("no podés cambiar tu estado durante un viaje");
+    		mensajel.setText(I18N.texto("viajes.error.cambiarEstado"));
     		return;
     	}
     	try {
@@ -152,23 +191,32 @@ public class ConductorViajesControlador implements Controlador {
     	mostrarEstado();
     }
     
+    /**
+     * Muestra en pantalla el estado actual del conductor.
+     */
     private void mostrarEstado() {
     	EstadoConductor estado = contexto.getUsuarioActual().getConductor().getEstadoConductor();
     	if (estado == EstadoConductor.DISPONIBLE) {
-    		lblEstado.setText("Disponible");
+    		lblEstado.setText(I18N.texto("viajes.estado.disponible"));
     	} else if (estado == EstadoConductor.FUERA_DE_SERVICIO) {
-    		lblEstado.setText("Fuera de servicio");
+    		lblEstado.setText("viajes.estado.fueraServicio");
     	} else {
-    		lblEstado.setText("En viaje");
+    		lblEstado.setText(I18N.texto("viajes.estado.enViaje"));
     	}
     }
 
+    /**
+     * Cierra la sesión del conductor, dejándolo fuera de servicio, y vuelve a la pantalla inicial.
+     * No se puede salir mientras está en viaje.
+     *
+     * @param event evento del botón de salir
+     */
     @FXML
     void onSalir(ActionEvent event) {
     	Conductor conductor = contexto.getUsuarioActual().getConductor();
     	EstadoConductor estado = conductor.getEstadoConductor();
     	if (estado == EstadoConductor.VIAJE_A_ORIGEN || estado == EstadoConductor.VIAJE_A_DESTINO) {
-    		mensajel.setText("no podés salir durante un viaje");
+    		mensajel.setText(I18N.texto("viajes.error.salir"));
     		return;
     	}
     	conductor.setEstado(EstadoConductor.FUERA_DE_SERVICIO);
@@ -177,17 +225,34 @@ public class ConductorViajesControlador implements Controlador {
     	navegador.irA("/vistas/SesionUsuario.fxml");
     }
 
+    /**
+     * Agrega o quita el servicio de envíos del vehículo actual según la casilla.
+     *
+     * @param event evento de la casilla de envíos
+     */
     @FXML
     void onServicioEnvios(ActionEvent event) {
     	cambiarServicio(TipoServicio.ENVIOS, chkEnvios, chkPasajeros);
     }
 
+    /**
+     * Agrega o quita el servicio de pasajeros del vehículo actual según la casilla.
+     *
+     * @param event evento de la casilla de pasajeros
+     */
     @FXML
     void onServicioPasajeros(ActionEvent event) {
     	cambiarServicio(TipoServicio.PASAJEROS, chkPasajeros, chkEnvios);
     }
 
     
+    /**
+     * Agrega o quita un tipo de servicio del vehículo actual. El vehículo no puede quedar sin ningún servicio.
+     *
+     * @param tipo tipo de servicio a cambiar
+     * @param este casilla del servicio que se cambió
+     * @param otro casilla del otro servicio
+     */
     private void cambiarServicio(TipoServicio tipo, CheckBox este, CheckBox otro) {
     	mensajel.setText("");
     	Vehiculo vehiculo = contexto.getVehiculoActual();
@@ -200,19 +265,25 @@ public class ConductorViajesControlador implements Controlador {
     	} else {
     		if (!otro.isSelected()) { // no puede quedar sin ninguno
     			este.setSelected(true);
-    			mensajel.setText("tiene que quedar al menos un tipo de servicio activo");
+    			mensajel.setText(I18N.texto("viajes.error.sinServicioActivo"));
     			return;
     		}
     		vehiculo.quitarTipoServicio(tipo);;
     	}
     }
     
+    /**
+     * Acepta el viaje seleccionado en la tabla con el conductor actual y lo quita de los pendientes.
+     * Muestra un error si no hay viaje elegido o el conductor no puede aceptarlo.
+     *
+     * @param event evento del botón de aceptar viaje
+     */
     @FXML
     void onAceptarViaje(ActionEvent event) {
     	mensajel.setText("");
     	FilaViaje fila = tblAlternativas.getSelectionModel().getSelectedItem();
     	if (fila == null) {
-    		mensajel.setText("elegí un viaje de la tabla");
+    		mensajel.setText(I18N.texto("viajes.error.elegirViaje"));
     		return;
     	}
     	try {
@@ -228,6 +299,9 @@ public class ConductorViajesControlador implements Controlador {
     
     
     
+    /**
+     * Carga el mapa en la vista web y registra cuándo está listo.
+     */
     private void cargarMapa() {
         motor = mapaWeb.getEngine();
         motor.setUserAgent("CotizadorViajes/1.0");
@@ -240,6 +314,9 @@ public class ConductorViajesControlador implements Controlador {
         motor.load(url.toExternalForm());
     }
 
+    /**
+     * Hace que al seleccionar un viaje en la tabla se muestre su recorrido en el mapa, y que se limpie al deseleccionarlo.
+     */
     private void configurarSeleccion() {
         tblAlternativas.getSelectionModel().selectedItemProperty().addListener((obs, anterior, fila) -> {
             if (!mapaListo) {
@@ -253,6 +330,11 @@ public class ConductorViajesControlador implements Controlador {
         });
     }
 
+    /**
+     * Dibuja en el mapa el origen y el destino de un viaje.
+     *
+     * @param viaje viaje a mostrar
+     */
     private void mostrarEnMapa(Viaje viaje) {
         Ubicacion o = viaje.getOrigen();
         Ubicacion d = viaje.getDestino();

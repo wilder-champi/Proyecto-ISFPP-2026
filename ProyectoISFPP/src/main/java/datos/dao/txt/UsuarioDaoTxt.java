@@ -16,6 +16,10 @@ import java.util.Set;
 import datos.dao.UsuarioDAO;
 import datos.dto.UsuarioDTO;
 
+/**
+ * DAO que obtiene y guarda los usuarios en un archivo de texto. Cada línea tiene nombre, teléfono
+ * y email y, si es conductor, también su licencia y las patentes de sus vehículos.
+ */
 public class UsuarioDaoTxt implements UsuarioDAO {
 
 	private static final int CAMPOS_USUARIO = 3; // Nombre, telefono y email
@@ -25,10 +29,21 @@ public class UsuarioDaoTxt implements UsuarioDAO {
 
 	private final String archivo;
 
+	/**
+	 * Crea el DAO con el archivo a utilizar.
+	 *
+	 * @param archivo ruta del archivo de usuarios
+	 */
 	public UsuarioDaoTxt(String archivo) {
 		this.archivo = archivo;
 	}
 
+	/**
+	 * Lee todos los usuarios del archivo.
+	 *
+	 * @return lista de usuarios, con sus licencias y patentes si son conductores
+	 * @throws ArchivoInvalidoException si una línea no es válida, hay un email repetido o una patente asignada a dos usuarios
+	 */
 	// Recibe el mapa de vehiculos para poder buscar cada patente
 	@Override
 	public List<UsuarioDTO> obtenerTodos() {
@@ -53,6 +68,14 @@ public class UsuarioDaoTxt implements UsuarioDAO {
 		return usuarios; // Retorno la list de usuarios con conductores en alta y usuarios normales
 	}
 
+	/**
+	 * Convierte una línea del archivo en un usuario.
+	 *
+	 * @param linea línea con los campos del usuario
+	 * @param patentesAsignadas patentes ya asignadas a otros usuarios
+	 * @return el usuario creado
+	 * @throws ArchivoInvalidoException si faltan datos, hay licencia sin patentes o una patente repetida
+	 */
 	private UsuarioDTO crear(Linea linea, Set<String> patentesAsignadas) {
 
 		List<String> c = linea.getCampos(); // Asigno la linea de datos del archivo
@@ -93,6 +116,12 @@ public class UsuarioDaoTxt implements UsuarioDAO {
 		return usuario;
 	}
 
+	/**
+	 * Agrega un usuario al final del archivo.
+	 *
+	 * @param usuario usuario a guardar
+	 * @throws IllegalStateException si no se puede escribir el archivo
+	 */
 	@Override
 	public void guardar(UsuarioDTO usuario) {
 		try (PrintWriter escritor = new PrintWriter(new FileWriter(archivo, true))) {
@@ -102,6 +131,13 @@ public class UsuarioDaoTxt implements UsuarioDAO {
 		}
 	}
 	
+	/**
+	 * Reemplaza el contenido del archivo con la lista de usuarios, escribiendo primero un archivo temporal
+	 * para no perder datos si ocurre un error.
+	 *
+	 * @param usuarios usuarios a guardar
+	 * @throws IllegalStateException si no se puede escribir o reemplazar el archivo
+	 */
 	@Override
 	public void guardarTodos(List<UsuarioDTO> usuarios) {
 		// se escribe en un archivo temporal para no perder datos si falla a mitad
@@ -120,6 +156,12 @@ public class UsuarioDaoTxt implements UsuarioDAO {
 		}
 	}
 	
+	/**
+	 * Arma la línea de texto de un usuario con sus campos separados por {@code ;}.
+	 *
+	 * @param usuario usuario a convertir
+	 * @return la línea lista para escribir en el archivo
+	 */
 	private String armarLinea(UsuarioDTO usuario) {
 		StringBuilder linea = new StringBuilder();
 		linea.append(usuario.getNombre()).append(";").append(usuario.getTelefono()).append(";")

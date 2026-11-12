@@ -19,6 +19,11 @@ import modelo.Viaje;
 import java.util.HashSet;
 import java.util.Set;
 
+/**
+ * Sistema central de la aplicación. Carga los servicios, los vehículos y los usuarios desde la fuente de datos,
+ * los convierte a objetos del modelo y se encarga de registrar usuarios y vehículos nuevos y de
+ * guardar los viajes pendientes.
+ */
 public class SistemaGuardado {
 
 	private final List<Servicio> servicios;
@@ -29,10 +34,19 @@ public class SistemaGuardado {
 	private final List<Viaje> viajesPendientes;
 	private final GeneradorUbicacion generadorUbicacion;
 
+	/**
+	 * Crea el sistema con la fábrica de DAO definida en el archivo de configuración.
+	 */
 	public SistemaGuardado() {
 		this(DAOLoader.getFactory());
 	}
 
+	/**
+	 * Crea el sistema cargando los datos desde la fábrica de DAO indicada. Los vehículos y usuarios con datos
+	 * inválidos se omiten y la carga continúa con los demás.
+	 *
+	 * @param fabrica fábrica que entrega los DAO de servicios, vehículos y usuarios
+	 */
 	public SistemaGuardado(DAOFactory fabrica) {
 		this.fabrica = fabrica;
 		
@@ -119,14 +133,29 @@ public class SistemaGuardado {
 	
 	
 
+	/**
+	 * Devuelve los servicios cargados.
+	 *
+	 * @return lista de servicios
+	 */
 	public List<Servicio> getServicios() {
 		return servicios;
 	}
 
+	/**
+	 * Devuelve los vehículos cargados.
+	 *
+	 * @return mapa de vehículos cuya clave es la patente
+	 */
 	public Map<String, Vehiculo> getVehiculos() {
 		return vehiculos;
 	}
 
+	/**
+	 * Devuelve los usuarios cargados.
+	 *
+	 * @return lista de usuarios
+	 */
 	public List<Usuario> getUsuarios() {
 		return usuarios;
 	}
@@ -150,6 +179,13 @@ public class SistemaGuardado {
 		fabrica.getUsuarioDAO().guardarTodos(dtos);
 	}*/
 
+	/**
+	 * Registra un usuario nuevo y, si es conductor, también sus vehículos. Primero se guardan los vehículos
+	 * y el usuario en la fuente de datos y recién después se agregan a la memoria.
+	 *
+	 * @param nuevo usuario a registrar
+	 * @throws IllegalArgumentException si el email ya existe o alguna patente ya está registrada
+	 */
 	public void registrarUsuario(Usuario nuevo) {
 		//se valida que el mail del usuario no este repetido ya que es algo unico para cada usuario
 		for (Usuario u : usuarios) {
@@ -180,6 +216,12 @@ public class SistemaGuardado {
 		usuarios.add(nuevo);
 	}
 
+	/**
+	 * Convierte un usuario del modelo en un DTO, con su licencia y las patentes de sus vehículos si es conductor.
+	 *
+	 * @param u usuario a convertir
+	 * @return el DTO del usuario
+	 */
 	private UsuarioDTO creeDTO(Usuario u) {
 		String licencia = null;
 		List<String> patentes = new ArrayList<>();
@@ -196,12 +238,24 @@ public class SistemaGuardado {
 		return new UsuarioDTO(u.getNombre(), u.getTelefono(), u.getEmail(), licencia, patentes);
 	}
 	
+	/**
+	 * Convierte un vehículo del modelo en un DTO.
+	 *
+	 * @param v vehículo a convertir
+	 * @return el DTO del vehículo
+	 */
 	private VehiculoDTO creeDTO(Vehiculo v) {
 		//retorna un vehiculo dto con todos los atributos del vehiculo cargado
 		return new VehiculoDTO(v.getPatente(), v.getModelo(), v.getCapacidadPasajeros(), v.getTipoVehiculo(),
 				v.getCategoriaVehiculo(), new ArrayList<>(v.getTipoServicios()));
 	}
 	
+	/**
+	 * Agrega un viaje a la lista de viajes pendientes si todavía no estaba.
+	 *
+	 * @param viaje viaje a agregar
+	 * @throws IllegalArgumentException si el viaje es {@code null}
+	 */
 	public void agregarViajePendiente(Viaje viaje) {
 		if (viaje == null) {
 			throw new IllegalArgumentException("el viaje no puede ser null");
@@ -211,16 +265,37 @@ public class SistemaGuardado {
 		}
 	}
 	
+	/**
+	 * Devuelve una copia de la lista de viajes pendientes.
+	 *
+	 * @return lista de viajes pendientes
+	 */
 	public List<Viaje> getViajesPendientes() {
 		return new ArrayList<>(viajesPendientes);
 	}
+	/**
+	 * Quita un viaje de la lista de viajes pendientes.
+	 *
+	 * @param viaje viaje a quitar
+	 */
 	public void removerViajePendiente(Viaje viaje) {
 		viajesPendientes.remove(viaje);
 	}
+	/**
+	 * Devuelve el generador de ubicaciones aleatorias, que cubre la zona de Puerto Madryn.
+	 *
+	 * @return generador de ubicaciones
+	 */
 	public GeneradorUbicacion getGeneradorUbicacion() {
 		return generadorUbicacion;
 	}
 	
+	/**
+	 * Busca un usuario por su email, sin distinguir mayúsculas de minúsculas.
+	 *
+	 * @param email email del usuario buscado
+	 * @return el usuario encontrado, o {@code null} si el email está vacío o no existe
+	 */
 	public Usuario buscarPorEmail(String email) {
 		if (email == null || email.isBlank()) {
 			return null;
@@ -233,6 +308,14 @@ public class SistemaGuardado {
 		return null;
 	}
 
+	/**
+	 * Agrega un vehículo nuevo a un conductor. Primero se guarda en la fuente de datos y, si salió bien,
+	 * se actualiza la memoria.
+	 *
+	 * @param usuario conductor al que se le agrega el vehículo
+	 * @param vehiculo vehículo a agregar
+	 * @throws IllegalArgumentException si el usuario no es conductor o la patente ya está registrada
+	 */
 	public void agregarVehiculoAConductor(Usuario usuario, Vehiculo vehiculo) {
 		if (usuario == null || usuario.getConductor() == null) {
 			throw new IllegalArgumentException("el usuario no es conductor");
@@ -255,6 +338,13 @@ public class SistemaGuardado {
 		vehiculos.put(vehiculo.getPatente(), vehiculo);
 	}
 
+	/**
+	 * Convierte un usuario en un DTO agregando a sus patentes la de un vehículo extra.
+	 *
+	 * @param u usuario a convertir
+	 * @param extra vehículo cuya patente se suma a las del usuario
+	 * @return el DTO del usuario con la patente nueva
+	 */
 	private UsuarioDTO creeDTO(Usuario u, Vehiculo extra) {
 		UsuarioDTO base = creeDTO(u);
 		List<String> patentes = new ArrayList<>(base.getPatentes());

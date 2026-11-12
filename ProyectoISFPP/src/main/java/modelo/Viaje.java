@@ -10,6 +10,10 @@ import enums.RolUsuario;
 import enums.EstadoViaje;
 import enums.EstadoConductor;
 
+/**
+ * Viaje de un cliente entre dos ubicaciones. Guarda su historial de estados (solicitado, aceptado,
+ * iniciado, finalizado, cancelado o rechazado) y controla que cada cambio sea válido.
+ */
 public class Viaje {
 	private UUID id;
 	private String motivoCancelacion;
@@ -28,6 +32,15 @@ public class Viaje {
 	
 	private double costoCancelacion = 0.0;
 
+	/**
+	 * Crea un viaje sin estados registrados.
+	 *
+	 * @param id identificador del viaje
+	 * @param origen ubicación de partida
+	 * @param destino ubicación de llegada
+	 * @param servicio servicio solicitado
+	 * @param cliente usuario que solicita el viaje
+	 */
 	public Viaje(UUID id, Ubicacion origen, Ubicacion destino, Servicio servicio, Usuario cliente) {
 		super();
 		this.id = id;
@@ -37,6 +50,14 @@ public class Viaje {
 		this.cliente = cliente;
 		this.registroViaje = new ArrayList<>();
 	}
+	/**
+	 * Crea un viaje con un identificador generado automáticamente (usado en los tests JUnit).
+	 *
+	 * @param cliente usuario que solicita el viaje
+	 * @param origen ubicación de partida
+	 * @param destino ubicación de llegada
+	 * @param servicio servicio solicitado
+	 */
 	//segundo constructor para los test Junit
 	public Viaje(Usuario cliente, Ubicacion origen, Ubicacion destino, Servicio servicio) {
 		
@@ -44,6 +65,12 @@ public class Viaje {
 	}
 	
 
+	/**
+	 * Solicita el viaje y lo agrega al historial del cliente.
+	 *
+	 * @param fechaHora fecha y hora de la solicitud
+	 * @throws IllegalStateException si el viaje ya fue solicitado o el cliente ya tiene un viaje activo
+	 */
 	public void solicitar(LocalDateTime fechaHora) {
 		if (!registroViaje.isEmpty()) {//solo veirica que el viaje ya este en algunos de los estados  ya que dicha list guarda el historial de estados del viaje
 			throw new IllegalStateException("El viaje ya fue solicitado");
@@ -58,6 +85,14 @@ public class Viaje {
 	
 	
 
+	/**
+	 * Acepta el viaje con un conductor, siempre que cumpla las condiciones: estar disponible,
+	 * no ser el mismo cliente y tener un vehículo y una categoría compatibles con el servicio.
+	 *
+	 * @param fechaHora fecha y hora de la aceptación
+	 * @param conductor usuario que acepta el viaje
+	 * @throws IllegalStateException si el viaje no está solicitado o el conductor no cumple las condiciones
+	 */
 	public void aceptar(LocalDateTime fechaHora, Usuario conductor) {
 		
 		if (estadoActual() != EstadoViaje.SOLICITADO) {//verifica que el viaje aun este en solicitud
@@ -109,6 +144,12 @@ public class Viaje {
 	
 	
 
+	/**
+	 * Inicia un viaje que fue aceptado y pone al conductor viajando hacia el destino.
+	 *
+	 * @param fechaHora fecha y hora de inicio
+	 * @throws IllegalStateException si el viaje no está aceptado
+	 */
 	public void iniciar(LocalDateTime fechaHora) {
 
 		if (estadoActual() != EstadoViaje.ACEPTADO) {//verifica si el estado del viaje fue aceptado
@@ -122,6 +163,14 @@ public class Viaje {
 	
 	
 	
+	/**
+	 * Finaliza un viaje iniciado, guarda las calificaciones y deja al conductor disponible.
+	 *
+	 * @param fechaHora fecha y hora de finalización
+	 * @param calificacionCliente calificación que recibe el cliente
+	 * @param calificacionConductor calificación que recibe el conductor
+	 * @throws IllegalStateException si el viaje no está iniciado
+	 */
 	public void finalizar(LocalDateTime fechaHora, CalificacionViaje calificacionCliente,
 			CalificacionViaje calificacionConductor) {
 		if (estadoActual() != EstadoViaje.INICIADO) {//verifica si el viaje fue previamente iniciado
@@ -136,6 +185,16 @@ public class Viaje {
 	
 	
 	
+	/**
+	 * Cancela el viaje. Si lo cancela el cliente con el viaje aceptado o iniciado se calcula un costo de cancelación.
+	 * El conductor, si lo hay, queda disponible.
+	 *
+	 * @param fechaHora fecha y hora de la cancelación
+	 * @param usuario usuario que cancela (el cliente o el conductor del viaje)
+	 * @param motivo motivo de la cancelación
+	 * @throws IllegalStateException si el viaje ya está finalizado, cancelado o rechazado
+	 * @throws IllegalArgumentException si el usuario no pertenece al viaje
+	 */
 	public void cancelar(LocalDateTime fechaHora, Usuario usuario, String motivo) {
 
 		EstadoViaje estado = estadoActual();
@@ -179,6 +238,12 @@ public class Viaje {
 	
 	
 
+	/**
+	 * Rechaza un viaje que está solicitado.
+	 *
+	 * @param fechaHora fecha y hora del rechazo
+	 * @throws IllegalStateException si el viaje no está solicitado
+	 */
 	public void rechazar(LocalDateTime fechaHora) {
 		if (estadoActual() != EstadoViaje.SOLICITADO) {//verica si el viaje fue solicitado si no es asi se le avisa que no se puede rechasar un viaje n solicitado
 			throw new IllegalStateException("El viaje no esta solicitado");
@@ -189,6 +254,11 @@ public class Viaje {
 	
 	
 	
+	/**
+	 * Devuelve el estado actual del viaje, que es el último registrado.
+	 *
+	 * @return estado actual, o {@code null} si el viaje todavía no fue solicitado
+	 */
 	public EstadoViaje estadoActual() {
 		if (registroViaje.isEmpty()) {//si el registro general del viaje esta vacion devuelve null
 			return null;
@@ -199,98 +269,218 @@ public class Viaje {
 	
 	
 
+	/**
+	 * Devuelve el identificador del viaje.
+	 *
+	 * @return identificador del viaje
+	 */
 	// Getters y Setters
 	public UUID getId() {
 		return id;
 	}
 
+	/**
+	 * Establece el identificador del viaje.
+	 *
+	 * @param id identificador del viaje
+	 */
 	public void setId(UUID id) {
 		this.id = id;
 	}
 
+	/**
+	 * Devuelve el motivo de la cancelación.
+	 *
+	 * @return motivo de la cancelación, o {@code null} si no fue cancelado
+	 */
 	public String getMotivoCancelacion() {
 		return motivoCancelacion;
 	}
 
+	/**
+	 * Establece el motivo de la cancelación.
+	 *
+	 * @param motivoCancelacion motivo de la cancelación
+	 */
 	public void setMotivoCancelacion(String motivoCancelacion) {
 		this.motivoCancelacion = motivoCancelacion;
 	}
 
+	/**
+	 * Devuelve el origen del viaje.
+	 *
+	 * @return ubicación de partida
+	 */
 	public Ubicacion getOrigen() {
 		return origen;
 	}
 
+	/**
+	 * Establece el origen del viaje.
+	 *
+	 * @param origen ubicación de partida
+	 */
 	public void setOrigen(Ubicacion origen) {
 		this.origen = origen;
 	}
 
+	/**
+	 * Devuelve el destino del viaje.
+	 *
+	 * @return ubicación de llegada
+	 */
 	public Ubicacion getDestino() {
 		return destino;
 	}
 
+	/**
+	 * Establece el destino del viaje.
+	 *
+	 * @param destino ubicación de llegada
+	 */
 	public void setDestino(Ubicacion destino) {
 		this.destino = destino;
 	}
 
+	/**
+	 * Devuelve el servicio del viaje.
+	 *
+	 * @return servicio solicitado
+	 */
 	public Servicio getServicio() {
 		return servicio;
 	}
 
+	/**
+	 * Establece el servicio del viaje.
+	 *
+	 * @param servicio servicio solicitado
+	 */
 	public void setServicio(Servicio servicio) {
 		this.servicio = servicio;
 	}
 
+	/**
+	 * Devuelve el historial de estados del viaje.
+	 *
+	 * @return lista de registros de estado, en orden cronológico
+	 */
 	public List<RegistroViaje> getRegistroViaje() {
 		return registroViaje;
 	}
 
+	/**
+	 * Devuelve el vehículo asignado al viaje.
+	 *
+	 * @return vehículo del viaje, o {@code null} si todavía no fue aceptado
+	 */
 	public Vehiculo getVehiculo() {
 		return vehiculo;
 	}
 
+	/**
+	 * Establece el vehículo del viaje.
+	 *
+	 * @param vehiculo vehículo asignado
+	 */
 	public void setVehiculo(Vehiculo vehiculo) {
 		this.vehiculo = vehiculo;
 	}
 
+	/**
+	 * Devuelve el cliente que solicitó el viaje.
+	 *
+	 * @return usuario cliente
+	 */
 	public Usuario getCliente() {
 		return cliente;
 	}
 
+	/**
+	 * Establece el cliente del viaje.
+	 *
+	 * @param cliente usuario cliente
+	 */
 	public void setCliente(Usuario cliente) {
 		this.cliente = cliente;
 	}
 
+	/**
+	 * Devuelve el conductor del viaje.
+	 *
+	 * @return usuario conductor, o {@code null} si todavía no fue aceptado
+	 */
 	public Usuario getConductor() {
 		return conductor;
 	}
 
+	/**
+	 * Establece el conductor del viaje.
+	 *
+	 * @param conductor usuario conductor
+	 */
 	public void setConductor(Usuario conductor) {
 		this.conductor = conductor;
 	}
 
+	/**
+	 * Devuelve el rol de quien canceló el viaje.
+	 *
+	 * @return rol de quien canceló, o {@code null} si no fue cancelado
+	 */
 	public RolUsuario getRolCancela() {
 		return rolCancela;
 	}
 
+	/**
+	 * Establece el rol de quien canceló el viaje.
+	 *
+	 * @param rolCancela rol de quien canceló
+	 */
 	public void setRolCancela(RolUsuario rolCancela) {
 		this.rolCancela = rolCancela;
 	}
 
+	/**
+	 * Devuelve la calificación recibida por el conductor.
+	 *
+	 * @return calificación del conductor
+	 */
 	public CalificacionViaje getCalificacionConductor() {
 		return calificacionConductor;
 	}
 
+	/**
+	 * Establece la calificación recibida por el conductor.
+	 *
+	 * @param calificacionConductor calificación del conductor
+	 */
 	public void setCalificacionConductor(CalificacionViaje calificacionConductor) {
 		this.calificacionConductor = calificacionConductor;
 	}
 
+	/**
+	 * Devuelve la calificación recibida por el cliente.
+	 *
+	 * @return calificación del cliente
+	 */
 	public CalificacionViaje getCalificacionCliente() {
 		return calificacionCliente;
 	}
 
+	/**
+	 * Establece la calificación recibida por el cliente.
+	 *
+	 * @param calificacionCliente calificación del cliente
+	 */
 	public void setCalificacionCliente(CalificacionViaje calificacionCliente) {
 		this.calificacionCliente = calificacionCliente;
 	}
+	/**
+	 * Devuelve el costo de cancelación del viaje.
+	 *
+	 * @return costo de cancelación (0 si no corresponde cobrar)
+	 */
 	public double getCostoCancelacion() {
 	    return costoCancelacion;
 	}

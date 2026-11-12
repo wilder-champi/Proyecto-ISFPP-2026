@@ -13,45 +13,57 @@
 <?import javafx.scene.web.WebView?>
 
 <AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="888.0" xmlns="http://javafx.com/javafx/26" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controladores.ConductorViajesControlador">
+
    <children>
       <VBox prefHeight="189.0" prefWidth="168.0">
          <children>
-            <Label prefHeight="53.0" prefWidth="167.0" text="                  Menu">
+            <Label prefHeight="53.0" prefWidth="167.0" text="%viajes.menu">
                <font>
                   <Font name="System Bold" size="12.0" />
                </font>
             </Label>
-            <ComboBox fx:id="cmbVehiculos" onAction="#onCambiarVehiculo" prefHeight="29.0" prefWidth="167.0" promptText="Cambiar vehiculo" />
+            <ComboBox fx:id="cmbVehiculos" onAction="#onCambiarVehiculo" prefHeight="29.0" prefWidth="167.0" promptText="%viajes.cambiarVehiculo" />
             <HBox prefHeight="18.0" prefWidth="167.0" />
-            <Button layoutX="10.0" layoutY="124.0" mnemonicParsing="false" onAction="#onAgregarVehiculo" prefHeight="20.0" prefWidth="167.0" text="+ Agregar Vehiculo" />
+            <Button layoutX="10.0" layoutY="124.0" mnemonicParsing="false" onAction="#onAgregarVehiculo" prefHeight="20.0" prefWidth="167.0" text="%viajes.agregarVehiculo" />
             <HBox layoutX="10.0" layoutY="151.0" prefHeight="19.0" prefWidth="167.0" />
-            <Button layoutX="10.0" layoutY="177.0" mnemonicParsing="false" onAction="#onSalir" prefHeight="6.0" prefWidth="167.0" text="Cerrar sesion" />
+            <Button layoutX="10.0" layoutY="177.0" mnemonicParsing="false" onAction="#onSalir" prefHeight="6.0" prefWidth="167.0" text="%viajes.cerrarSesion" />
          </children>
       </VBox>
+
       <TableView fx:id="tblAlternativas" layoutX="-2.0" layoutY="252.0" prefHeight="147.0" prefWidth="500.0">
         <columns>
-            <TableColumn fx:id="colServicio" prefWidth="132.79998779296875" text="Servicio" />
-            <TableColumn fx:id="colPrecio" prefWidth="127.20001220703125" text="Precio" />
-            <TableColumn fx:id="colTiempo" prefWidth="110.4000244140625" text="Tiempo" />
-            <TableColumn fx:id="colKilometro" prefWidth="124.80001220703127" text="km" />
+            <TableColumn fx:id="colServicio" prefWidth="132.79998779296875" text="%viajes.colServicio" />
+            <TableColumn fx:id="colPrecio" prefWidth="127.20001220703125" text="%viajes.colPrecio" />
+            <TableColumn fx:id="colTiempo" prefWidth="110.4000244140625" text="%viajes.colTiempo" />
+            <TableColumn fx:id="colKilometro" prefWidth="124.80001220703127" text="%viajes.colKilometro" />
         </columns>
       </TableView>
-      <CheckBox fx:id="chkEnvios" layoutX="276.0" layoutY="162.0" mnemonicParsing="false" onAction="#onServicioEnvios" prefHeight="18.0" prefWidth="66.0" text="Envios" />
-      <Label layoutX="197.0" layoutY="124.0" prefHeight="26.0" prefWidth="86.0" text="Elige Servicio">
+
+      <CheckBox fx:id="chkEnvios" layoutX="276.0" layoutY="162.0" mnemonicParsing="false" onAction="#onServicioEnvios" prefHeight="18.0" prefWidth="66.0" text="%viajes.envios" />
+
+      <Label layoutX="197.0" layoutY="124.0" prefHeight="26.0" prefWidth="86.0" text="%viajes.elegirServicio">
          <font>
             <Font name="System Bold" size="12.0" />
          </font>
       </Label>
-      <CheckBox fx:id="chkPasajeros" layoutX="183.0" layoutY="162.0" mnemonicParsing="false" onAction="#onServicioPasajeros" prefHeight="18.0" prefWidth="80.0" text="Pasajeros" />
-      <Label layoutX="183.0" layoutY="23.0" prefHeight="27.0" prefWidth="168.0" text="Gestion de Viajes">
+
+      <CheckBox fx:id="chkPasajeros" layoutX="183.0" layoutY="162.0" mnemonicParsing="false" onAction="#onServicioPasajeros" prefHeight="18.0" prefWidth="80.0" text="%viajes.pasajeros" />
+
+      <Label layoutX="183.0" layoutY="23.0" prefHeight="27.0" prefWidth="168.0" text="%viajes.titulo">
          <font>
             <Font size="22.0" />
          </font>
       </Label>
-      <CheckBox layoutX="187.0" layoutY="79.0" mnemonicParsing="false" onAction="#onEstadoConductor" prefHeight="18.0" prefWidth="122.0" text="Estado conductor" />
+
+      <CheckBox layoutX="187.0" layoutY="79.0" mnemonicParsing="false" onAction="#onEstadoConductor" prefHeight="18.0" prefWidth="122.0" text="%viajes.estadoConductor" />
+
       <Label fx:id="mensajel" layoutX="14.0" layoutY="200.0" />
-      <Button layoutX="638.0" layoutY="361.0" mnemonicParsing="false" onAction="#onAceptarViaje" text="aceptar viaje" />
+
+      <Button layoutX="638.0" layoutY="361.0" mnemonicParsing="false" onAction="#onAceptarViaje" text="%viajes.aceptarViaje" />
+
       <Label fx:id="lblEstado" layoutX="8.0" layoutY="222.0" />
+
       <WebView fx:id="mapaWeb" layoutX="509.0" layoutY="12.0" prefHeight="339.0" prefWidth="365.0" />
    </children>
 </AnchorPane>
+

@@ -1,35 +1,79 @@
 package modelo;
 
+/**
+ * Punto geográfico definido por su latitud y su longitud.
+ */
 public class Ubicacion {
 	
+	/**
+	 * Radio medio de la Tierra en kilómetros, usado para calcular distancias.
+	 */
 	private static final double RADIO_TIERRA_KM = 6371.0;
 
 	private double latitud;
 	private double longitud;
 	
+	/**
+	 * Crea una ubicación.
+	 *
+	 * @param latitud latitud en grados
+	 * @param longitud longitud en grados
+	 */
 	public Ubicacion(double latitud, double longitud) {
 		super();
 		this.latitud = latitud;
 		this.longitud = longitud;
 	}
+	/**
+	 * Devuelve la latitud.
+	 *
+	 * @return latitud en grados
+	 */
 	public double getLatitud() {
 		return latitud;
 	}
+	/**
+	 * Establece la latitud.
+	 *
+	 * @param latitud latitud en grados
+	 */
 	public void setLatitud(double latitud) {
 		this.latitud = latitud;
 	}
+	/**
+	 * Devuelve la longitud.
+	 *
+	 * @return longitud en grados
+	 */
 	public double getLongitud() {
 		return longitud;
 	}
+	/**
+	 * Establece la longitud.
+	 *
+	 * @param longitud longitud en grados
+	 */
 	public void setLongitud(double longitud) {
 		this.longitud = longitud;
 	}
 	
+	/**
+	 * Devuelve una descripción de la ubicación con su latitud y su longitud.
+	 *
+	 * @return texto con las coordenadas
+	 */
 	@Override
 	public String toString() {
 		return "Ubicacion [latitud=" + latitud + ", longitud=" + longitud + "]";
 	}
 	
+	/**
+	 * Calcula la distancia entre esta ubicación y otra usando la fórmula de Haversine.
+	 *
+	 * @param otra ubicación con la que se calcula la distancia
+	 * @return distancia en kilómetros
+	 * @throws IllegalArgumentException si la otra ubicación es {@code null}
+	 */
 	public double calcularDistancia(Ubicacion otra) {
 		//se utiliza la formula de hearvane
 		if (otra == null) {

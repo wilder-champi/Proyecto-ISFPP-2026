@@ -6,6 +6,10 @@ import enums.TipoVehiculo;
 import java.util.EnumSet;
 import java.util.Set;
 
+/**
+ * Vehículo de un conductor, identificado por su patente, con su modelo, capacidad,
+ * tipo, categoría, servicios que presta y ubicación.
+ */
 public class Vehiculo {
 
 	private String patente;
@@ -17,12 +21,35 @@ public class Vehiculo {
 	private Set<TipoServicio> tipoServicio;
 	private Ubicacion ubicacion;
 
+	/**
+	 * Crea un vehículo con su ubicación inicial.
+	 *
+	 * @param patente patente (6 o 7 caracteres, solo letras y números)
+	 * @param modelo modelo del vehículo
+	 * @param capacidadPasajeros cantidad de pasajeros (al menos 1)
+	 * @param tipo tipo de vehículo
+	 * @param categoria categoría del vehículo
+	 * @param servicio1 primer tipo de servicio que presta
+	 * @param ubicacion ubicación inicial
+	 * @throws IllegalArgumentException si algún dato no es válido o la ubicación es {@code null}
+	 */
 	public Vehiculo(String patente, String modelo, int capacidadPasajeros, TipoVehiculo tipo,
 			CategoriaVehiculo categoria, TipoServicio servicio1, Ubicacion ubicacion) {
 	this(patente,modelo,capacidadPasajeros,tipo,categoria,servicio1);
 		setUbicacion(ubicacion); // Valida y guarda la ubicacion resivida
 	}
 
+	/**
+	 * Crea un vehículo sin ubicación inicial. La patente se guarda en mayúsculas y sin espacios en los extremos.
+	 *
+	 * @param patente patente (6 o 7 caracteres, solo letras y números)
+	 * @param modelo modelo del vehículo
+	 * @param capacidadPasajeros cantidad de pasajeros (al menos 1)
+	 * @param tipo tipo de vehículo
+	 * @param categoria categoría del vehículo
+	 * @param servicio1 primer tipo de servicio que presta
+	 * @throws IllegalArgumentException si algún dato no es válido
+	 */
 	public Vehiculo(String patente, String modelo, int capacidadPasajeros, TipoVehiculo tipo,
 			CategoriaVehiculo categoria, TipoServicio servicio1) {
 
@@ -72,6 +99,12 @@ public class Vehiculo {
 		this.tipoServicio = setServicios;
 	}
 
+	/**
+	 * Agrega un tipo de servicio que puede prestar el vehículo.
+	 *
+	 * @param tipoServicio tipo de servicio a agregar
+	 * @throws IllegalArgumentException si el tipo de servicio es {@code null}
+	 */
 	public void agregarTipoServicio(TipoServicio tipoServicio) {
 
 		if (tipoServicio == null) {
@@ -81,6 +114,12 @@ public class Vehiculo {
 		this.tipoServicio.add(tipoServicio);
 	}
 	
+	/**
+	 * Quita un tipo de servicio del vehículo. No hace nada si el vehículo no lo tenía.
+	 *
+	 * @param tipo tipo de servicio a quitar
+	 * @throws IllegalArgumentException si es {@code null} o si es el único tipo de servicio del vehículo
+	 */
 	public void quitarTipoServicio(TipoServicio tipo) {
 		if (tipo == null) {
 			throw new IllegalArgumentException("El tipo de servicio no puede ser null");
@@ -94,6 +133,11 @@ public class Vehiculo {
 		this.tipoServicio.remove(tipo);
 	}
 
+	/**
+	 * Devuelve una copia de los tipos de servicio que presta el vehículo.
+	 *
+	 * @return conjunto de tipos de servicio (siempre tiene al menos uno)
+	 */
 	// Este metodo en si hace una copia asi no perdierdo la condicion del viaje que
 	// mayuscula
 	// como minimo tiene que tener un tipo de servicio
@@ -101,10 +145,21 @@ public class Vehiculo {
 		return EnumSet.copyOf(tipoServicio);
 	}
 
+	/**
+	 * Devuelve la ubicación del vehículo.
+	 *
+	 * @return ubicación actual, o {@code null} si todavía no tiene
+	 */
 	public Ubicacion getUbicacion() {
 		return ubicacion;
 	}
 
+	/**
+	 * Establece la ubicación del vehículo.
+	 *
+	 * @param ubicacion nueva ubicación
+	 * @throws IllegalArgumentException si la ubicación es {@code null}
+	 */
 	public void setUbicacion(Ubicacion ubicacion) {
 		if (ubicacion == null) {
 			throw new IllegalArgumentException("la ubicacion no puede ser null");
@@ -112,22 +167,47 @@ public class Vehiculo {
 		this.ubicacion = ubicacion;
 	}
 
+	/**
+	 * Devuelve la patente.
+	 *
+	 * @return patente del vehículo
+	 */
 	public String getPatente() {
 		return patente;
 	}
 
+	/**
+	 * Devuelve el modelo.
+	 *
+	 * @return modelo del vehículo
+	 */
 	public String getModelo() {
 		return modelo;
 	}
 
+	/**
+	 * Devuelve la capacidad de pasajeros.
+	 *
+	 * @return cantidad de pasajeros
+	 */
 	public int getCapacidadPasajeros() {
 		return capacidadPasajeros;
 	}
 
+	/**
+	 * Devuelve la categoría del vehículo.
+	 *
+	 * @return categoría del vehículo
+	 */
 	public CategoriaVehiculo getCategoriaVehiculo() {
 		return categoriaVehiculo;
 	}
 
+	/**
+	 * Devuelve el tipo de vehículo.
+	 *
+	 * @return tipo de vehículo
+	 */
 	public TipoVehiculo getTipoVehiculo() {
 		return tipoVehiculo;
 	}

@@ -13,15 +13,30 @@ import enums.CategoriaVehiculo;
 import enums.TipoServicio;
 import enums.TipoVehiculo;
 
+/**
+ * DAO que obtiene los servicios desde la base de datos.
+ */
 public class ServicioDaoBd implements ServicioDAO{
 
 	//se agrego la conexion
 	private final ConexionBD conexion;
 
+    /**
+     * Crea el DAO con la conexión a utilizar.
+     *
+     * @param conexion conexión a la base de datos
+     */
     public ServicioDaoBd(ConexionBD conexion) {
         this.conexion = conexion;
     }
 					
+	/**
+	 * Consulta todos los servicios de la base de datos, ordenados por nombre.
+	 *
+	 * @return lista de servicios
+	 * @throws IllegalArgumentException si algún valor guardado no se puede convertir a su enum
+	 * @throws IllegalStateException si falla la consulta
+	 */
 	@Override
 	public List<ServicioDTO> obtenerTodos() {
 		 // Lista donde se almacenan los servicios obtenidos de la BD

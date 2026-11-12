@@ -1,5 +1,4 @@
 <?xml version="1.0" encoding="UTF-8"?>
-
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.ComboBox?>
 <?import javafx.scene.control.Label?>
@@ -15,6 +14,7 @@
 <?import javafx.scene.web.WebView?>
 
 <AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="616.0" prefWidth="1144.0" xmlns="http://javafx.com/javafx/26" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controladores.CotizacionViajeControlador">
+
    <children>
       <GridPane layoutX="27.0" layoutY="49.0" prefHeight="299.0" prefWidth="297.0">
         <columnConstraints>
@@ -34,45 +34,54 @@
             <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
         </rowConstraints>
          <children>
-            <Label text="origen(latitud)" />
-            <Label text="destino(latitud)" GridPane.rowIndex="1" />
-            <Label text="vehiculo" GridPane.rowIndex="5" />
-            <Label text="categoria" GridPane.rowIndex="6" />
-            <Label text="origen(longitud)" GridPane.rowIndex="2" />
-            <Label text="destino(longitud)" GridPane.rowIndex="3" />
-            <Label prefHeight="18.0" prefWidth="120.0" text="viaje para" GridPane.rowIndex="7" />
+            <Label text="%cotizacion.latOrigen" />
+            <Label text="%cotizacion.latDestino" GridPane.rowIndex="1" />
+            <Label text="%cotizacion.vehiculo" GridPane.rowIndex="5" />
+            <Label text="%cotizacion.categoria" GridPane.rowIndex="6" />
+            <Label text="%cotizacion.lonOrigen" GridPane.rowIndex="2" />
+            <Label text="%cotizacion.lonDestino" GridPane.rowIndex="3" />
+            <Label prefHeight="18.0" prefWidth="120.0" text="%cotizacion.viajePara" GridPane.rowIndex="7" />
             <TextField fx:id="TextoLatOrigen" promptText="-42.77" GridPane.columnIndex="1" />
             <TextField fx:id="TextoLatDestino" promptText="-42.75" GridPane.columnIndex="1" GridPane.rowIndex="1" />
             <TextField fx:id="TextoLonOrigen" promptText="-65.03" GridPane.columnIndex="1" GridPane.rowIndex="2" />
             <TextField fx:id="TextoLonDestino" promptText="-65.00" GridPane.columnIndex="1" GridPane.rowIndex="3" />
-            <ComboBox fx:id="cmbVehiculo" prefHeight="25.0" prefWidth="156.0" promptText="auto o moto" GridPane.columnIndex="1" GridPane.rowIndex="5" />
-            <ComboBox fx:id="cmbCategoria" prefHeight="25.0" prefWidth="159.0" promptText="todas" GridPane.columnIndex="1" GridPane.rowIndex="6" />
-            <ComboBox fx:id="cmbServicio" prefHeight="28.0" prefWidth="172.0" promptText=" pasajeros o envios" GridPane.columnIndex="1" GridPane.rowIndex="7" />
+            <ComboBox fx:id="cmbVehiculo" prefHeight="25.0" prefWidth="156.0" promptText="%cotizacion.seleccionarVehiculo" GridPane.columnIndex="1" GridPane.rowIndex="5" />
+            <ComboBox fx:id="cmbCategoria" prefHeight="25.0" prefWidth="159.0" promptText="%cotizacion.seleccionarCategoria" GridPane.columnIndex="1" GridPane.rowIndex="6" />
+            <ComboBox fx:id="cmbServicio" prefHeight="28.0" prefWidth="172.0" promptText="%cotizacion.seleccionarServicio" GridPane.columnIndex="1" GridPane.rowIndex="7" />
          </children>
       </GridPane>
+
       <Label fx:id="mensajel" layoutX="23.0" layoutY="403.0" prefHeight="18.0" prefWidth="1.0" />
+
       <HBox layoutX="24.0" layoutY="373.0" prefHeight="39.0" prefWidth="190.0" spacing="10.0">
          <children>
-            <Button mnemonicParsing="false" onAction="#onCotizar" text="cotizar" />
-            <Button mnemonicParsing="false" onAction="#onLimpiar" text="limpiar" />
-            <Button mnemonicParsing="false" onAction="#onVolver" text="volver" />
+            <Button mnemonicParsing="false" onAction="#onCotizar" text="%cotizacion.cotizar" />
+            <Button mnemonicParsing="false" onAction="#onLimpiar" text="%cotizacion.limpiar" />
+            <Button mnemonicParsing="false" onAction="#onVolver" text="%cotizacion.volver" />
          </children>
       </HBox>
+
       <TableView fx:id="tblAlternativas" layoutX="23.0" layoutY="463.0" prefHeight="148.0" prefWidth="480.0">
          <columns>
-            <TableColumn fx:id="colServicio" prefWidth="145.0" text="Servicio" />
-            <TableColumn fx:id="colPrecio" prefWidth="175.0" text="Precio" />
-            <TableColumn fx:id="colTiempo" prefWidth="159.0" text="Tiempo (min)" />
+            <TableColumn fx:id="colServicio" prefWidth="145.0" text="%cotizacion.colServicio" />
+            <TableColumn fx:id="colPrecio" prefWidth="175.0" text="%cotizacion.colPrecio" />
+            <TableColumn fx:id="colTiempo" prefWidth="159.0" text="%cotizacion.colTiempo" />
          </columns>
       </TableView>
-      <Label alignment="CENTER" layoutX="151.0" layoutY="14.0" prefHeight="35.0" prefWidth="253.0" text="cotizacion de viaje" textFill="#2e0fe0">
+
+      <Label alignment="CENTER" layoutX="151.0" layoutY="14.0" prefHeight="35.0" prefWidth="253.0" text="%cotizacion.titulo" textFill="#2e0fe0">
          <font>
             <Font name="System Bold Italic" size="24.0" />
          </font>
       </Label>
-      <Button layoutX="214.0" layoutY="373.0" mnemonicParsing="false" onAction="#onSolicitar" text="solicitar" />
+
+      <Button layoutX="214.0" layoutY="373.0" mnemonicParsing="false" onAction="#onSolicitar" text="%cotizacion.solicitar" />
+
       <WebView fx:id="mapaWeb" layoutX="503.0" layoutY="20.0" prefHeight="528.0" prefWidth="620.0" />
-      <Button layoutX="378.0" layoutY="163.0" mnemonicParsing="false" onAction="#onMarcarOrigenMapa" text="marca origen" />
-      <Button layoutX="376.0" layoutY="221.0" mnemonicParsing="false" onAction="#onMarcarDestinoMapa" text="marca destino" />
+
+      <Button layoutX="378.0" layoutY="163.0" mnemonicParsing="false" onAction="#onMarcarOrigenMapa" text="%cotizacion.marcarOrigen" />
+
+      <Button layoutX="376.0" layoutY="221.0" mnemonicParsing="false" onAction="#onMarcarDestinoMapa" text="%cotizacion.marcarDestino" />
+
    </children>
 </AnchorPane>

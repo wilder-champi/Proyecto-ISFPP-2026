@@ -9,16 +9,30 @@ import enums.CategoriaVehiculo;
 import enums.TipoServicio;
 import enums.TipoVehiculo;
 
+/**
+ * DAO que obtiene los servicios desde un archivo de texto.
+ */
 public class ServicioDaoTxt implements ServicioDAO {
 
 	private static final int CAMPOS = 7;// Se usa como parametro de los campos recibidos de parte del txt
 	private final String archivo;// Donde se almacena el nombre del archivo
 
+	/**
+	 * Crea el DAO con el archivo a leer.
+	 *
+	 * @param archivo ruta del archivo de servicios
+	 */
 	//constructor
 	public ServicioDaoTxt(String archivo) {
 		this.archivo = archivo;// Se le asigna el nombre del archivo
 	}
 
+	/**
+	 * Lee todos los servicios del archivo.
+	 *
+	 * @return lista de servicios
+	 * @throws ArchivoInvalidoException si alguna línea no es válida
+	 */
 	@Override
 	public List<ServicioDTO> obtenerTodos() {
 		List<ServicioDTO> servicios = new ArrayList<>();// Se crea una lista vacia para almacenar todos los servicios permitidos del archivo
@@ -29,6 +43,13 @@ public class ServicioDaoTxt implements ServicioDAO {
 		return servicios;	// Retorna la lista de servicios validos del txt
 	}
 
+	/**
+	 * Convierte una línea del archivo en un servicio.
+	 *
+	 * @param linea línea con los campos del servicio
+	 * @return el servicio creado
+	 * @throws ArchivoInvalidoException si faltan campos o algún valor no es válido
+	 */
 	private ServicioDTO crear(Linea linea) {
 		List<String> c = linea.getCampos(); // Se le asigna ala list la list que contiene los campos de una linea del txt
 		
