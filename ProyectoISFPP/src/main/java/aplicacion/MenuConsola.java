@@ -53,7 +53,7 @@ public class MenuConsola {
 		do {
 			interfazConsola.mostrarMensaje("\n===== MENU PRINCIPAL =====");
 			interfazConsola.mostrarMensaje("1. Registrarse");
-			interfazConsola.mostrarMensaje("2. Iniciar seccion");
+			interfazConsola.mostrarMensaje("2. Iniciar sesion");
 			interfazConsola.mostrarMensaje("0. Salir");
 			opcion = leerEntero("Opcion: ");
 

@@ -1,0 +1,1 @@
+packageSearchIndex = [{"l":"All Packages","u":"allpackages-index.html"},{"l":"aplicacion"},{"l":"controladores"},{"l":"datos.dao"},{"l":"datos.dao.bd"},{"l":"datos.dao.txt"},{"l":"datos.dto"},{"l":"enums"},{"l":"interfaz_consola"},{"l":"internacionalizacion"},{"l":"logica"},{"l":"modelo"},{"l":"test"},{"l":"test2"}];updateSearchResults();
