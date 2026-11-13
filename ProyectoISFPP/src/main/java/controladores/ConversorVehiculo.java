@@ -19,7 +19,7 @@ public class ConversorVehiculo extends StringConverter<Vehiculo> {
 		if (vehiculo == null) {
 			return "";
 		}
-		return vehiculo.getTipoVehiculo().toString(); // MOTO, AUTO...
+		return vehiculo.getTipoVehiculo().toString()+":"+vehiculo.getCategoriaVehiculo(); // MOTO, AUTO...
 	}
 
 	/**
