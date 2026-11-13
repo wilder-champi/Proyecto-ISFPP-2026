@@ -77,7 +77,7 @@ public class ServicioDaoBd implements ServicioDAO{
     	  if (categoria == 0) {
     	      categoriaVehiculo = CategoriaVehiculo.ESTANDAR;
 
-    	  } else if (categoria == 1) {
+    	  } else if (categoria == 1) {	
     	      categoriaVehiculo = CategoriaVehiculo.CONFORT;
 
     	  } else if (categoria == 2) {
@@ -118,7 +118,7 @@ public class ServicioDaoBd implements ServicioDAO{
        
 	} catch (SQLException e) {
             throw new IllegalStateException("Error al obtener los servicios de la BD", e);
-      	}
+      }
    
  //devuelve la lista de servicios 
        return lista_servicios;

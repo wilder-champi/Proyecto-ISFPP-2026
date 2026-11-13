@@ -114,7 +114,17 @@ public class Conductor_Controlador implements Controlador {
 		errorMensaje.setText("");
         try {
 			String email = TextoMail.getText().trim();
+			
+			if(sistema.buscarPorEmail(email)!= null &&sistema.buscarPorEmail(email).getConductor()== null) {
+	            Usuario nuevo = new Usuario(TextoNombre.getText(), TextoTelefono.getText(), email);
+	            nuevo.altaConductor(TextoLicenciaConducir.getText(), null);
+	            // Guardamos temporalmente los datos
+	               contexto.setUsuarioPendiente(nuevo);
+	               contexto.setLicenciaPendiente(TextoLicenciaConducir.getText().trim());
+	
+			}else {
          
+			
             if (sistema.buscarPorEmail(email) != null) {
                 errorMensaje.setText(I18N.texto("conductor.error.yaExiste"));
                 return;
@@ -123,12 +133,13 @@ public class Conductor_Controlador implements Controlador {
                 errorMensaje.setText(I18N.texto("conductor.error.licenciaVacia"));
                 return;
             }
-
             Usuario nuevo = new Usuario(TextoNombre.getText(), TextoTelefono.getText(), email);
             
          // Guardamos temporalmente los datos
             contexto.setUsuarioPendiente(nuevo);
             contexto.setLicenciaPendiente(TextoLicenciaConducir.getText().trim());
+			}
+
     
          // Pasamos a registrar el vehículo
             navegador.irA("/vistas/Vehiculo.fxml");

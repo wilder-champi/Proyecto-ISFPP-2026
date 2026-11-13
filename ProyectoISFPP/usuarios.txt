@@ -1,4 +1,4 @@
-Juan Perez;+549117363900;juan.perez@email.com;A13-B1-D1-E1;AD123BC;123ABC;AD012HI;6767HHE;9999OK
+Juan Perez;+549117363900;juan.perez@email.com;A13-B1-D1-E1;AD123BC;123ABC;AD012HI;PPPPPP
 Maria Gomez;+549112933912;maria.gomez@email.com
 Carlos Rodriguez;+549112209805;carlos.rodriguez@email.com
 Ana Martinez;+549118220576;ana.martinez@email.com;B1-D1;AB456DE
@@ -13,7 +13,6 @@ Elena Diaz;+549118213171;elena.diaz@email.com
 Fernando Heredia;+549116574866;fernando.heredia@email.com
 Marta Torres;+549112729295;marta.torres@email.com
 Gabriel Suarez;+549116953410;gabriel.suarez@email.com
-Paula Vazquez;+549115539336;paula.vazquez@email.com;A12;456DEF
 Santiago Castro;+549112266612;santiago.castro@email.com
 Valentina Ramirez;+549112249957;valentina.ramirez@email.com
 Ricardo Silva;+549112785972;ricardo.silva@email.com;B1-D1-G;AE345JK;AJ890TU
@@ -28,7 +27,6 @@ Jorge Medina;+549118006407;jorge.medina@email.com
 Clara Luna;+549117451625;clara.luna@email.com
 Francisco Herrera;+549117883140;francisco.herrera@email.com
 Beatriz Dominguez;+549116571300;beatriz.dominguez@email.com
-Gonzalo Perez;+549115519187;gonzalo.perez@email.com;B1-A13;345MNO;012JKL
 Daniela Gomez;+549113849189;daniela.gomez@email.com
 Roberto Rodriguez;+549115768238;roberto.rodriguez@email.com
 Victoria Martinez;+549116943118;victoria.martinez@email.com;B1-D1-D2;AG901NO;AH234PQ
@@ -55,3 +53,4 @@ nose;139839179;hola@email.com
 evelyn;2804707569;eveorellana626@email.com
 tae;111222333;tae@email.com
 wilder;2804533615;wil.@email.com
+juan;3333;jw@email.com;989898;KKKKKK

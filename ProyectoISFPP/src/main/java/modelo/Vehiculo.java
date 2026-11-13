@@ -74,6 +74,14 @@ public class Vehiculo {
 		if (capacidadPasajeros < 1) {
 			throw new IllegalArgumentException("la capacidad de pasajeros debe ser al menos 1");
 		}
+				
+		if (tipo == TipoVehiculo.MOTO && capacidadPasajeros > 1) {
+		    throw new IllegalArgumentException("una moto admite como maximo 1 pasajero");
+		}
+		if (tipo == TipoVehiculo.AUTO && capacidadPasajeros > 4) {
+		    throw new IllegalArgumentException("un auto admite como maximo 4 pasajeros");
+		}
+		
 		if (tipo == null) {
 			throw new IllegalArgumentException("el tipo de vehiculo es obligatorio");
 		}

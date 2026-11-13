@@ -1,12 +1,17 @@
 package controladores;
 
+import java.net.URL;
 import java.time.LocalDateTime;
+import java.util.Locale;
 
 import aplicacion.Contexto;
 import aplicacion.Navegador;
+import enums.CalificacionViaje;
 import enums.EstadoConductor;
+import enums.EstadoViaje;
 import enums.TipoServicio;
 import internacionalizacion.I18N;
+import javafx.concurrent.Worker;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.CheckBox;
@@ -15,17 +20,13 @@ import javafx.scene.control.Label;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.cell.PropertyValueFactory;
-import logica.Cotizador;
-import modelo.Conductor;
-import modelo.Vehiculo;
-import modelo.Viaje;
-
-import java.net.URL;
-import java.util.Locale;
-import javafx.concurrent.Worker;
 import javafx.scene.web.WebEngine;
 import javafx.scene.web.WebView;
+import logica.Cotizador;
+import modelo.Conductor;
 import modelo.Ubicacion;
+import modelo.Vehiculo;
+import modelo.Viaje;
 
 /**
  * Controlador de la pantalla del conductor: permite cambiar de vehículo, elegir los servicios que presta,
@@ -39,6 +40,9 @@ public class ConductorViajesControlador implements Controlador {
 	
     @FXML
     private ComboBox<Vehiculo> cmbVehiculos;
+    
+    @FXML
+    private ComboBox<CalificacionViaje> cmbCalificacion;
 
     @FXML
     private TableColumn<FilaViaje, String> colKilometro;
@@ -89,6 +93,7 @@ public class ConductorViajesControlador implements Controlador {
     	mostrarEstado();//cargamso el estado actual del conductor
     	cargarMapa();
     	configurarSeleccion();
+    	cargarCalificaciones();
 	}
     
     /**
@@ -344,7 +349,63 @@ public class ConductorViajesControlador implements Controlador {
     }
     
     
+    /** Busca el viaje aceptado o iniciado del conductor actual. */
+    private Viaje viajeActivo() {
+        for (Viaje v : contexto.getUsuarioActual().getConductor().getViajes()) {
+            EstadoViaje e = v.estadoActual();
+            if (e == EstadoViaje.ACEPTADO || e == EstadoViaje.INICIADO) {
+                return v;
+            }
+        }
+        return null;
+    }
     
+    @FXML
+    void oniniciarViaje(ActionEvent event) {
+    	 mensajel.setText("");
+    	    Viaje viaje = viajeActivo();
+    	    if (viaje == null) {
+    	        mensajel.setText("No hay un viaje aceptado para iniciar");
+    	        return;
+    	    }
+    	    try {
+    	        viaje.iniciar(LocalDateTime.now());
+    	        mostrarEstado();
+    	    } catch (IllegalStateException e) {
+    	        mensajel.setText(e.getMessage());
+    	    }
+    }
+
+    @FXML
+    void ontermianrViaje(ActionEvent event) {
+    	 mensajel.setText("");
+    	    Viaje viaje = viajeActivo();
+    	    if (viaje == null) {
+    	        mensajel.setText("No hay un viaje iniciado para finalizar");
+    	        return;
+    	    }
+    	    try {
+    	        CalificacionViaje nota = cmbCalificacion.getValue();
+    	        if (nota == null) {
+    	            nota = CalificacionViaje.NO_CALIFICADO;
+    	        }
+    	        viaje.finalizar(LocalDateTime.now(), nota, CalificacionViaje.NO_CALIFICADO);
+    	        cmbCalificacion.setValue(null);
+    	        mostrarEstado();
+    	    } catch (IllegalStateException e) {
+    	        mensajel.setText(e.getMessage());
+    	    }
+    }
+    
+    
+    private void cargarCalificaciones() {
+        for (CalificacionViaje c : CalificacionViaje.values()) {
+            if (c != CalificacionViaje.NO_CALIFICADO) {
+                cmbCalificacion.getItems().add(c);
+            }
+        }
+    }
+
     
 
 }

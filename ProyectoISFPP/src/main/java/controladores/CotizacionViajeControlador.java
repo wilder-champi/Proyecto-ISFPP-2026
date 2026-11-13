@@ -1,14 +1,18 @@
 package controladores;
 
+import java.net.URL;
 import java.time.LocalDateTime;
 import java.util.List;
 
 import aplicacion.Contexto;
 import aplicacion.Navegador;
+import enums.CalificacionViaje;
 import enums.CategoriaVehiculo;
+import enums.EstadoViaje;
 import enums.TipoServicio;
 import enums.TipoVehiculo;
 import internacionalizacion.I18N;
+import javafx.concurrent.Worker;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.ComboBox;
@@ -17,15 +21,12 @@ import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TextField;
 import javafx.scene.control.cell.PropertyValueFactory;
+import javafx.scene.web.WebEngine;
 import javafx.scene.web.WebView;
 import logica.Alternativa;
 import logica.Cotizador;
 import modelo.Ubicacion;
 import modelo.Viaje;
-
-import java.net.URL;
-import javafx.concurrent.Worker;
-import javafx.scene.web.WebEngine;
 import netscape.javascript.JSObject;
 
 /**
@@ -56,6 +57,8 @@ public class CotizacionViajeControlador implements Controlador {
 	private ComboBox<TipoServicio> cmbServicio;
 	@FXML
 	private ComboBox<CategoriaVehiculo> cmbCategoria;
+    @FXML
+    private ComboBox<CalificacionViaje> cmbCalificacion;
 
 	@FXML
 	private TableView<FilaAlternativa> tblAlternativas;
@@ -114,6 +117,12 @@ public class CotizacionViajeControlador implements Controlador {
 		cmbVehiculo.getItems().addAll(TipoVehiculo.values());
 		cmbServicio.getItems().addAll(TipoServicio.values());
 		cmbCategoria.getItems().addAll(CategoriaVehiculo.values());
+		
+		for (CalificacionViaje c : CalificacionViaje.values()) {
+		    if (c != CalificacionViaje.NO_CALIFICADO) {
+		        cmbCalificacion.getItems().add(c);
+		    }
+		}
 	}
 
 	/**
@@ -286,6 +295,45 @@ public class CotizacionViajeControlador implements Controlador {
 				TextoLonDestino.setText(String.valueOf(lon));
 			}
 		}
+	}
+	
+	
+	private Viaje ultimoViaje() {
+	    List<Viaje> viajes = contexto.getUsuarioActual().getCliente().getViajes();
+
+	    if (viajes.isEmpty()) {
+	        return null; // el cliente todavía no hizo ningún viaje
+	    }
+
+	    int posicionUltimo = viajes.size() - 1;
+	    return viajes.get(posicionUltimo);
+	}
+	
+	
+	
+	
+	/** Habilita el selector solo si el último viaje terminó y todavía no fue calificado. */
+	private void actualizarCalificacion() {
+	    Viaje viaje = ultimoViaje();
+	    boolean puede = false;
+	    if (viaje != null && viaje.estadoActual() == EstadoViaje.FINALIZADO) {
+	        CalificacionViaje nota = viaje.getCalificacionConductor();
+	        puede = (nota == null || nota == CalificacionViaje.NO_CALIFICADO);
+	    }
+	    cmbCalificacion.setDisable(!puede);
+	}
+	
+	
+	@FXML
+	void onCalificar(ActionEvent event) {
+	    CalificacionViaje nota = cmbCalificacion.getValue();
+	    Viaje viaje = ultimoViaje();
+	    if (nota == null || viaje == null) {
+	        return; // se ejecuta también cuando se limpia el combo
+	    }
+	    viaje.setCalificacionConductor(nota);
+	    cmbCalificacion.setValue(null);
+	    actualizarCalificacion();
 	}
 
 }
