@@ -2,9 +2,11 @@ package datos.dto;
 
 import java.util.List;
 
-import enums.CategoriaVehiculo;
-import enums.TipoVehiculo;
-import enums.TipoServicio;
+import modelo.CategoriaVehiculo;
+import modelo.TipoServicio;
+import modelo.TipoVehiculo;
+
+
 
 /**
  * Objeto de transferencia con los datos de un vehículo, tal como se leen de la fuente de datos.

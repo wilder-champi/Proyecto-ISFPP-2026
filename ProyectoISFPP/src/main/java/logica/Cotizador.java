@@ -3,9 +3,9 @@ package logica;
 import java.util.ArrayList;
 import java.util.List;
 
-import enums.CategoriaVehiculo;
-import enums.TipoServicio;
+import modelo.CategoriaVehiculo;
 import modelo.Servicio;
+import modelo.TipoServicio;
 import modelo.Ubicacion;
 
 /**

@@ -1,12 +1,13 @@
 package test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+
 import org.junit.jupiter.api.Test;
 
+import modelo.CategoriaVehiculo;
 import modelo.Servicio;
-import enums.CategoriaVehiculo;
-import enums.TipoServicio;
-import enums.TipoVehiculo;
+import modelo.TipoServicio;
+import modelo.TipoVehiculo;
 
 class TestServicio {
 

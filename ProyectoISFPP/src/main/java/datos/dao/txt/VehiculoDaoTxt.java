@@ -1,5 +1,8 @@
 package datos.dao.txt;
 
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -7,13 +10,9 @@ import java.util.Map;
 
 import datos.dao.VehiculoDAO;
 import datos.dto.VehiculoDTO;
-import enums.CategoriaVehiculo;
-import enums.TipoServicio;
-import enums.TipoVehiculo;
-
-import java.io.FileWriter;
-import java.io.IOException;
-import java.io.PrintWriter;
+import modelo.CategoriaVehiculo;
+import modelo.TipoServicio;
+import modelo.TipoVehiculo;
 //import logica.GeneradorUbicacion;
 
 
@@ -25,16 +24,14 @@ public class VehiculoDaoTxt implements VehiculoDAO {
 	private static final int CAMPOS_MINIMOS = 6;	// Son los datos minimos ya que dicho vehiculo debe tener almenos un servicio
 
 	private final String archivo;	// Se usa para almacenar el nombre del archivo
-	//private final GeneradorUbicacion generador;//se usara para la cracion de la ubcacion de dicho vehiculo ya que este no cuenta con una propia desde el txt
 
 	/**
 	 * Crea el DAO con el archivo a utilizar.
 	 *
 	 * @param archivo ruta del archivo de vehículos
 	 */
-	public VehiculoDaoTxt(String archivo /*, GeneradorUbicacion generador*/) {
+	public VehiculoDaoTxt(String archivo ) {
 		this.archivo = archivo;
-		//this.generador = generador;
 	}
 
 	/**

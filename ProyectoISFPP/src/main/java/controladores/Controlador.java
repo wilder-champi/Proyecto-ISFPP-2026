@@ -1,8 +1,5 @@
 package controladores;
 
-import aplicacion.Contexto;
-import aplicacion.Navegador;
-
 /**
  * Interfaz que implementan los controladores de las vistas. Permite entregarles el {@link Navegador}
  * (que maneja el cambio de pantallas) y el {@link Contexto} (que guarda los datos compartidos entre controladores).

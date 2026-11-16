@@ -1,10 +1,5 @@
 package controladores;
 
-import aplicacion.Contexto;
-import aplicacion.Navegador;
-import enums.CategoriaVehiculo;
-import enums.TipoServicio;
-import enums.TipoVehiculo;
 import internacionalizacion.I18N;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -12,6 +7,9 @@ import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import logica.SistemaGuardado;
+import modelo.CategoriaVehiculo;
+import modelo.TipoServicio;
+import modelo.TipoVehiculo;
 import modelo.Usuario;
 import modelo.Vehiculo;
 

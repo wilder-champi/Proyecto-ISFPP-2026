@@ -16,8 +16,6 @@ public class TxtDAOFactory implements DAOFactory {
 	private final String archivoServicios; // Nombre del archivo txt de servicios
 	private final String archivoVehiculos; // Nombre del archivo txt de vehiculos
 	private final String archivoUsuarios; // Nombre del archivo txt de usuarios
-	//private final GeneradorUbicacion generador; // genera las ubicaciones al azar de los vehiculos
-
 	/**
 	 * Crea la fábrica con los nombres de los archivos de datos.
 	 *
@@ -26,12 +24,10 @@ public class TxtDAOFactory implements DAOFactory {
 	 * @param archivoUsuarios archivo de usuarios
 	 */
 	// Los nombres de archivo entran desde afuera la fabrica
-	public TxtDAOFactory(String archivoServicios, String archivoVehiculos, String archivoUsuarios /*,
-			GeneradorUbicacion generador*/) {
+	public TxtDAOFactory(String archivoServicios, String archivoVehiculos, String archivoUsuarios ) {
 		this.archivoServicios = archivoServicios;
 		this.archivoVehiculos = archivoVehiculos;
 		this.archivoUsuarios = archivoUsuarios;
-		//this.generador = generador;
 	}
 
 	/**
@@ -53,7 +49,7 @@ public class TxtDAOFactory implements DAOFactory {
 	// Crea el dao de vehiculos con su archivo y el generador de ubicaciones
 	@Override
 	public VehiculoDAO getVehiculoDAO() {
-		return new VehiculoDaoTxt(archivoVehiculos /*, generador*/);
+		return new VehiculoDaoTxt(archivoVehiculos);
 	}
 
 	/**

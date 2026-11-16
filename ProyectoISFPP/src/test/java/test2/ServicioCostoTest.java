@@ -5,10 +5,10 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
-import enums.CategoriaVehiculo;
+import modelo.CategoriaVehiculo;
 import modelo.Servicio;
-import enums.TipoServicio;
-import enums.TipoVehiculo;
+import modelo.TipoServicio;
+import modelo.TipoVehiculo;
 
 class ServicioCostoTest {
 

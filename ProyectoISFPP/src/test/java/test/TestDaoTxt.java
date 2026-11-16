@@ -15,8 +15,8 @@ import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
 
+import datos.DAOLoader;
 import datos.dao.DAOFactory;
-import datos.dao.DAOLoader;
 import datos.dao.txt.ArchivoInvalidoException;
 import datos.dao.txt.ServicioDaoTxt;
 import datos.dao.txt.UsuarioDaoTxt;
@@ -24,7 +24,7 @@ import datos.dao.txt.VehiculoDaoTxt;
 import datos.dto.ServicioDTO;
 import datos.dto.UsuarioDTO;
 import datos.dto.VehiculoDTO;
-import enums.TipoServicio;
+import modelo.TipoServicio;
 
 // Prueba los DAO de txt: lo que leen de los archivos y como detectan los errores
 class TestDaoTxt {

@@ -1,14 +1,14 @@
-package datos.dao;
+package datos;
 
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.util.Locale;
 import java.util.Properties;
 
+import datos.dao.DAOFactory;
 import datos.dao.bd.BdDAOFactory;
 import datos.dao.txt.TxtDAOFactory;
 
-import logica.GeneradorUbicacion;
 
 /**
  * Lee el archivo de configuración y crea la fábrica de DAO correspondiente al tipo de persistencia
@@ -50,8 +50,6 @@ public class DAOLoader {
 	public static DAOFactory crearFactory(String archivo) {
 		Properties diccionario = cargar(archivo);
 		// retorna el valor de las latitudes y longitudes que son el parametro de madryn
-		GeneradorUbicacion generador = new GeneradorUbicacion(numero(diccionario, "latitud1"),
-				numero(diccionario, "longitud1"), numero(diccionario, "latitud2"), numero(diccionario, "longitud2"));
 
 		 // Obtiene el tipo de persistencia configurado.
         // Si no se indica, utiliza TXT por defecto.
@@ -65,7 +63,7 @@ public class DAOLoader {
 		// Le pasa a la fabrica los nombres de los archivos txt
 		return new TxtDAOFactory(texto(diccionario, "servicio"),
 				texto(diccionario, "vehiculo"),
-				texto(diccionario, "usuario") /*, generador*/);
+				texto(diccionario, "usuario"));
 		
         case "BD":
             // Crea los DAO que trabajan con PostgreSQL
@@ -116,11 +114,4 @@ public class DAOLoader {
 		return valor.trim(); // Retorna el valor quitandole los espacios
 	}
 
-	private static double numero(Properties diccionario, String clave) {
-		try {
-			return Double.parseDouble(texto(diccionario, clave)); // se le delega al metodo texto la validacion y busqueda del valor con dicha clave y se hace un parse para que el valor sea un numero double
-		} catch (NumberFormatException e) {
-			throw new IllegalStateException("el valor de la clave '" + clave + "' no es un numero");
-		} // si este no pudo ser asignado porque no era un numero se lanza una excepcion
-	}
 }

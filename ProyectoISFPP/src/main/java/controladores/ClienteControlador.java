@@ -1,8 +1,6 @@
 package controladores;
 
 import javafx.scene.control.Label;
-import aplicacion.Contexto;
-import aplicacion.Navegador;
 import internacionalizacion.I18N;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;

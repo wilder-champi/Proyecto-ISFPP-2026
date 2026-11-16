@@ -4,10 +4,11 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Scanner;
 
-import enums.EstadoViaje;
-import enums.RolUsuario;
 import interfaz_consola.interfazConsola;
+import logica.OperacionesViaje;
 import logica.SistemaGuardado;
+import modelo.EstadoViaje;
+import modelo.RolUsuario;
 import modelo.Servicio;
 import modelo.Ubicacion;
 import modelo.Usuario;
@@ -377,12 +378,11 @@ public class MenuConsola {
 		String motivo = teclado.nextLine().trim();
 		
 		try {
-			viajeActivo.cancelar(LocalDateTime.now(), usuarioActual, motivo);
-			sistema.removerViajePendiente(viajeActivo); // Lo sacamos de la lista global
+			double costo = OperacionesViaje.cancelar(viajeActivo, usuarioActual, motivo, LocalDateTime.now());
+			sistema.removerViajePendiente(viajeActivo);
 			interfazConsola.mostrarMensaje("viaje cancelado.");
-			
-			if (viajeActivo.getCostoCancelacion() > 0) {
-				interfazConsola.mostrarMensaje("costo de cancelacion: " + viajeActivo.getCostoCancelacion());
+			if (costo > 0) {
+				interfazConsola.mostrarMensaje("costo de cancelacion: " + costo);
 			}
 		} catch (IllegalStateException | IllegalArgumentException e) {
 			interfazConsola.mostrarError("Error al cancelar: " + e.getMessage());

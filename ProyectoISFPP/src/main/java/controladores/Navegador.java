@@ -1,8 +1,7 @@
-package aplicacion;
+package controladores;
 
 import java.io.IOException;
 
-import controladores.Controlador;
 import internacionalizacion.I18N;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;

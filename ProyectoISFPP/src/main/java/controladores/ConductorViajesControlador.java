@@ -4,12 +4,6 @@ import java.net.URL;
 import java.time.LocalDateTime;
 import java.util.Locale;
 
-import aplicacion.Contexto;
-import aplicacion.Navegador;
-import enums.CalificacionViaje;
-import enums.EstadoConductor;
-import enums.EstadoViaje;
-import enums.TipoServicio;
 import internacionalizacion.I18N;
 import javafx.concurrent.Worker;
 import javafx.event.ActionEvent;
@@ -22,8 +16,12 @@ import javafx.scene.control.TableView;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.web.WebEngine;
 import javafx.scene.web.WebView;
-import logica.Cotizador;
+import logica.OperacionesConductor;
+import modelo.CalificacionViaje;
 import modelo.Conductor;
+import modelo.EstadoConductor;
+import modelo.EstadoViaje;
+import modelo.TipoServicio;
 import modelo.Ubicacion;
 import modelo.Vehiculo;
 import modelo.Viaje;
@@ -36,7 +34,6 @@ public class ConductorViajesControlador implements Controlador {
 
 	private Navegador navegador;
 	private Contexto contexto;
-	private Cotizador cotizador;
 	
     @FXML
     private ComboBox<Vehiculo> cmbVehiculos;
@@ -160,7 +157,7 @@ public class ConductorViajesControlador implements Controlador {
         }
         mensajel.setText("");
         try {
-            contexto.getUsuarioActual().getConductor().setVehiculoActivo(elegido);
+            OperacionesConductor.cambiarVehiculo(contexto.getUsuarioActual().getConductor(), elegido);
             contexto.setVehiculoActual(elegido);
             mostrarServiciosDelVehiculo();
         } catch (IllegalStateException | IllegalArgumentException e) {
@@ -188,8 +185,7 @@ public class ConductorViajesControlador implements Controlador {
     		if (actual == EstadoConductor.DISPONIBLE) {
     			conductor.setEstado(EstadoConductor.FUERA_DE_SERVICIO);
     		} else {
-    			conductor.ponerDisponible(contexto.getSistema().getGeneradorUbicacion());
-    		}
+    			OperacionesConductor.ponerDisponible(conductor, contexto.getSistema().getGeneradorUbicacion());    		}
     	} catch (IllegalStateException | IllegalArgumentException e) {
     		mensajel.setText(e.getMessage());
     	}
@@ -237,7 +233,7 @@ public class ConductorViajesControlador implements Controlador {
      */
     @FXML
     void onServicioEnvios(ActionEvent event) {
-    	cambiarServicio(TipoServicio.ENVIOS, chkEnvios, chkPasajeros);
+    	cambiarServicio(TipoServicio.ENVIOS, chkEnvios);
     }
 
     /**
@@ -247,7 +243,7 @@ public class ConductorViajesControlador implements Controlador {
      */
     @FXML
     void onServicioPasajeros(ActionEvent event) {
-    	cambiarServicio(TipoServicio.PASAJEROS, chkPasajeros, chkEnvios);
+    	cambiarServicio(TipoServicio.PASAJEROS, chkPasajeros);
     }
 
     
@@ -258,22 +254,18 @@ public class ConductorViajesControlador implements Controlador {
      * @param este casilla del servicio que se cambió
      * @param otro casilla del otro servicio
      */
-    private void cambiarServicio(TipoServicio tipo, CheckBox este, CheckBox otro) {
+    private void cambiarServicio(TipoServicio tipo, CheckBox este) {
     	mensajel.setText("");
     	Vehiculo vehiculo = contexto.getVehiculoActual();
     	if (vehiculo == null) {
     		return;
     	}
-
     	if (este.isSelected()) {
     		vehiculo.agregarTipoServicio(tipo);
     	} else {
-    		if (!otro.isSelected()) { // no puede quedar sin ninguno
-    			este.setSelected(true);
-    			mensajel.setText(I18N.texto("viajes.error.sinServicioActivo"));
-    			return;
-    		}
-    		vehiculo.quitarTipoServicio(tipo);;
+    		// el vehiculo del Campus no permite quitar servicios: se vuelve a marcar la casilla
+    		este.setSelected(true);
+    		mensajel.setText(I18N.texto("viajes.error.noQuitarServicio"));
     	}
     }
     

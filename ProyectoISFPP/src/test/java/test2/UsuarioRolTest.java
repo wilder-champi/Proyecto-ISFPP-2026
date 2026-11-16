@@ -9,12 +9,12 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
-import enums.CategoriaVehiculo;
-import enums.EstadoConductor;
-import enums.RolUsuario;
+import modelo.CategoriaVehiculo;
+import modelo.EstadoConductor;
+import modelo.RolUsuario;
 import modelo.Servicio;
-import enums.TipoServicio;
-import enums.TipoVehiculo;
+import modelo.TipoServicio;
+import modelo.TipoVehiculo;
 import modelo.Ubicacion;
 import modelo.Usuario;
 import modelo.Vehiculo;

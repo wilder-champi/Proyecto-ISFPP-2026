@@ -4,11 +4,10 @@ import java.time.LocalDateTime;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.CountDownLatch;
 
-import enums.CalificacionViaje;
+import interfaz_consola.interfazConsola;
+import modelo.CalificacionViaje;
 import modelo.Usuario;
 import modelo.Viaje;
-
-import interfaz_consola.interfazConsola;
 /**
  * CONSUMIDOR: representa a un conductor.
  * En un ciclo saca un pedido de la cola (take), intenta aceptarlo y, si puede,

@@ -1,16 +1,10 @@
 package controladores;
 
 import java.net.URL;
+import java.text.MessageFormat;
 import java.time.LocalDateTime;
 import java.util.List;
 
-import aplicacion.Contexto;
-import aplicacion.Navegador;
-import enums.CalificacionViaje;
-import enums.CategoriaVehiculo;
-import enums.EstadoViaje;
-import enums.TipoServicio;
-import enums.TipoVehiculo;
 import internacionalizacion.I18N;
 import javafx.concurrent.Worker;
 import javafx.event.ActionEvent;
@@ -25,6 +19,11 @@ import javafx.scene.web.WebEngine;
 import javafx.scene.web.WebView;
 import logica.Alternativa;
 import logica.Cotizador;
+import modelo.CalificacionViaje;
+import modelo.CategoriaVehiculo;
+import modelo.EstadoViaje;
+import modelo.TipoServicio;
+import modelo.TipoVehiculo;
 import modelo.Ubicacion;
 import modelo.Viaje;
 import netscape.javascript.JSObject;
@@ -133,7 +132,7 @@ public class CotizacionViajeControlador implements Controlador {
 	 */
 	@FXML
 	void onCotizar(ActionEvent event) {
-		mensajel.setText("67");
+		mensajel.setText("");
 		try {
 			Ubicacion origen = new Ubicacion(leer(TextoLatOrigen), leer(TextoLonOrigen));
 			Ubicacion destino = new Ubicacion(leer(TextoLatDestino), leer(TextoLonDestino));
@@ -155,7 +154,7 @@ public class CotizacionViajeControlador implements Controlador {
 				mensajel.setText(I18N.texto("cotizacion.error.sinServicios"));
 			}
 		} catch (IllegalArgumentException e) {
-			mensajel.setText(e.getMessage());
+			mensajel.setText(I18N.texto("cotizacion.error.coordenadas"));
 		}
 	}
 
@@ -181,10 +180,10 @@ public class CotizacionViajeControlador implements Controlador {
 			viaje.solicitar(LocalDateTime.now());
 			contexto.getSistema().agregarViajePendiente(viaje);
 
-			mensajel.setText("viaje solicitado, id " + viaje.getId());
+			mensajel.setText(MessageFormat.format(I18N.texto("cotizacion.mensaje.solicitado"), viaje.getId()));
 			tblAlternativas.getItems().clear();
 		} catch (IllegalStateException | IllegalArgumentException e) {
-			mensajel.setText(e.getMessage());
+			mensajel.setText(I18N.texto("cotizacion.error.coordenadas"));
 		}
 	}
 
@@ -311,29 +310,16 @@ public class CotizacionViajeControlador implements Controlador {
 	
 	
 	
-	
-	/** Habilita el selector solo si el último viaje terminó y todavía no fue calificado. */
-	private void actualizarCalificacion() {
-	    Viaje viaje = ultimoViaje();
-	    boolean puede = false;
-	    if (viaje != null && viaje.estadoActual() == EstadoViaje.FINALIZADO) {
-	        CalificacionViaje nota = viaje.getCalificacionConductor();
-	        puede = (nota == null || nota == CalificacionViaje.NO_CALIFICADO);
-	    }
-	    cmbCalificacion.setDisable(!puede);
-	}
-	
-	
 	@FXML
 	void onCalificar(ActionEvent event) {
 	    CalificacionViaje nota = cmbCalificacion.getValue();
 	    Viaje viaje = ultimoViaje();
-	    if (nota == null || viaje == null) {
-	        return; // se ejecuta también cuando se limpia el combo
+	    if (nota == null || viaje == null || viaje.estadoActual() != EstadoViaje.INICIADO) {
+	        return; 
 	    }
-	    viaje.setCalificacionConductor(nota);
+	    viaje.finalizar(LocalDateTime.now(), CalificacionViaje.NO_CALIFICADO, nota);
 	    cmbCalificacion.setValue(null);
-	    actualizarCalificacion();
 	}
+	
 
 }

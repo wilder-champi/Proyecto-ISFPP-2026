@@ -82,5 +82,18 @@ public class GeneradorUbicacion {
 		double resultado = minimo + (aleatorio * ancho);//al valor minimo osea dependiendo si se habla de latitud que el minimo seria la coordenada que se encuentra ams al norte y en la longitud seria la coordenda que se encuentra mas al oeste en si ala coordenada minima se le suma dicho desplasamiento
 		return resultado;//retorna la nueva cordenada latitud/longitud
 	}
+	
+	public double getLatitudMinima()  {
+		return latitudMinima; 
+	}
+	public double getLatitudMaxima()  {
+		return latitudMaxima; 
+	}
+	public double getLongitudMinima() {
+		return longitudMinima; 
+	}
+	public double getLongitudMaxima() { 
+		return longitudMaxima; 
+	}
 
 }

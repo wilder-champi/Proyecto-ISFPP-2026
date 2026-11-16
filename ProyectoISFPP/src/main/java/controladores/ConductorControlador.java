@@ -1,21 +1,19 @@
 package controladores;
 
-import aplicacion.Contexto;
-import aplicacion.Navegador;
-import enums.RolUsuario;
 import internacionalizacion.I18N;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import logica.SistemaGuardado;
+import modelo.RolUsuario;
 import modelo.Usuario;
 
 /**
  * Controlador de la pantalla de ingreso de conductores: permite ingresar con un email de conductor
  * registrado o iniciar el registro de uno nuevo.
  */
-public class Conductor_Controlador implements Controlador {
+public class ConductorControlador implements Controlador {
 	
 	private Navegador navegador;
 	private SistemaGuardado sistema;

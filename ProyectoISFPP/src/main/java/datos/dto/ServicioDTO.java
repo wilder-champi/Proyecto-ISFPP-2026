@@ -1,8 +1,8 @@
 package datos.dto;
 
-import enums.CategoriaVehiculo;
-import enums.TipoVehiculo;
-import enums.TipoServicio;
+import modelo.CategoriaVehiculo;
+import modelo.TipoServicio;
+import modelo.TipoVehiculo;
 
 /**
  * Objeto de transferencia con los datos de un servicio, tal como se leen de la fuente de datos.

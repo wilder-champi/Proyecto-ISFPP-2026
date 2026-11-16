@@ -11,12 +11,13 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 
-import enums.RolUsuario;
 import interfaz_consola.interfazConsola;
 import logica.ConsumidorConductor;
 import logica.GeneradorUbicacion;
+import logica.OperacionesConductor;
 import logica.ProductorSolicitud;
 import logica.SistemaGuardado;
+import modelo.RolUsuario;
 import modelo.Servicio;
 import modelo.Usuario;
 import modelo.Vehiculo;
@@ -65,7 +66,7 @@ public class TestProductorConsumidor {
 				continue; // sin vehiculo activo o sin servicio compatible
 			}
 			c.cambiarRolActivo(RolUsuario.CONDUCTOR);
-			c.getConductor().ponerDisponible(generador);
+			OperacionesConductor.ponerDisponible(c.getConductor(), generador);
 			servicioPorConductor.put(c, s);
 		}
 

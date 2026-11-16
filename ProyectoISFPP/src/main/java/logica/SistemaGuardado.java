@@ -1,23 +1,22 @@
 	package logica;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
+import datos.DAOLoader;
 import datos.dao.DAOFactory;
-import datos.dao.DAOLoader;
 import datos.dto.ServicioDTO;
 import datos.dto.UsuarioDTO;
 import datos.dto.VehiculoDTO;
-import enums.TipoServicio;
 import modelo.Servicio;
+import modelo.TipoServicio;
 import modelo.Usuario;
 import modelo.Vehiculo;
 import modelo.Viaje;
-
-import java.util.HashSet;
-import java.util.Set;
 
 /**
  * Sistema central de la aplicación. Carga los servicios, los vehículos y los usuarios desde la fuente de datos,
@@ -50,7 +49,7 @@ public class SistemaGuardado {
 	public SistemaGuardado(DAOFactory fabrica) {
 		this.fabrica = fabrica;
 		
-		this.generadorUbicacion = new GeneradorUbicacion(-42.87689, -65.20872, -42.57303, -64.78616);
+		this.generadorUbicacion = Ciudad.cargarGenerador("ciudad.properties");
 		
 		this.viajesPendientes = new ArrayList<>();
 

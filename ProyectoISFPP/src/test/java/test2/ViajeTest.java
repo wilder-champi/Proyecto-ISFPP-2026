@@ -1,6 +1,9 @@
 package test2;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.time.LocalDateTime;
 
@@ -8,14 +11,14 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
-import enums.CalificacionViaje;
-import enums.CategoriaVehiculo;
-import enums.EstadoConductor;
-import enums.EstadoViaje;
-import enums.RolUsuario;
+import modelo.CalificacionViaje;
+import modelo.CategoriaVehiculo;
+import modelo.EstadoConductor;
+import modelo.EstadoViaje;
+import modelo.RolUsuario;
 import modelo.Servicio;
-import enums.TipoServicio;
-import enums.TipoVehiculo;
+import modelo.TipoServicio;
+import modelo.TipoVehiculo;
 import modelo.Ubicacion;
 import modelo.Usuario;
 import modelo.Vehiculo;

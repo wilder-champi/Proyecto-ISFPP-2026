@@ -5,9 +5,10 @@ import java.util.List;
 
 import datos.dao.ServicioDAO;
 import datos.dto.ServicioDTO;
-import enums.CategoriaVehiculo;
-import enums.TipoServicio;
-import enums.TipoVehiculo;
+import modelo.CategoriaVehiculo;
+import modelo.TipoServicio;
+import modelo.TipoVehiculo;
+
 
 /**
  * DAO que obtiene los servicios desde un archivo de texto.

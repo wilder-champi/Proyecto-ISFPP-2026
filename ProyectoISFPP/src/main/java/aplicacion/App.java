@@ -1,5 +1,7 @@
 package aplicacion;
 
+import controladores.Contexto;
+import controladores.Navegador;
 import javafx.application.Application;
 import javafx.stage.Stage;
 import logica.SistemaGuardado;

@@ -2,8 +2,6 @@ package controladores;
 
 import java.util.Locale;
 
-import aplicacion.Contexto;
-import aplicacion.Navegador;
 import internacionalizacion.I18N;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;

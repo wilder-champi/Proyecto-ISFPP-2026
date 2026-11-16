@@ -9,12 +9,12 @@ import java.util.List;
 
 import org.junit.jupiter.api.Test;
 
-import enums.CategoriaVehiculo;
-import enums.TipoServicio;
-import enums.TipoVehiculo;
 import logica.Alternativa;
 import logica.Cotizador;
+import modelo.CategoriaVehiculo;
 import modelo.Servicio;
+import modelo.TipoServicio;
+import modelo.TipoVehiculo;
 import modelo.Ubicacion;
 
 // Prueba que el cotizador arme bien las alternativas de viaje

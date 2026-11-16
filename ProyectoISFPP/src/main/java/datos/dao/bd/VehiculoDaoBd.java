@@ -11,9 +11,9 @@ import java.util.Map;
 
 import datos.dao.VehiculoDAO;
 import datos.dto.VehiculoDTO;
-import enums.CategoriaVehiculo;
-import enums.TipoServicio;
-import enums.TipoVehiculo;
+import modelo.CategoriaVehiculo;
+import modelo.TipoServicio;
+import modelo.TipoVehiculo;
 
 /**
  * DAO que obtiene los vehículos desde la base de datos. Por el momento es de solo lectura.
