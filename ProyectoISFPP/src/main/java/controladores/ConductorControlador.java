@@ -107,45 +107,32 @@ public class ConductorControlador implements Controlador {
      * @param event evento del botón de crear
      */
     // Recibe los datos para crear un conductor
+   
     @FXML
     void onCrear(ActionEvent event) {
-		errorMensaje.setText("");
+        errorMensaje.setText("");
         try {
-			String email = TextoMail.getText().trim();
-			
-			if(sistema.buscarPorEmail(email)!= null &&sistema.buscarPorEmail(email).getConductor()== null) {
-	            Usuario nuevo = new Usuario(TextoNombre.getText(), TextoTelefono.getText(), email);
-	            nuevo.altaConductor(TextoLicenciaConducir.getText(), null);
-	            // Guardamos temporalmente los datos
-	               contexto.setUsuarioPendiente(nuevo);
-	               contexto.setLicenciaPendiente(TextoLicenciaConducir.getText().trim());
-	
-			}else {
-         
-			
-            if (sistema.buscarPorEmail(email) != null) {
-                errorMensaje.setText(I18N.texto("conductor.error.yaExiste"));
-                return;
-            }
-            if (TextoLicenciaConducir.getText().isBlank()) {
+            String email = TextoMail.getText().trim();
+            String licencia = TextoLicenciaConducir.getText().trim();
+            if (licencia.isEmpty()) {
                 errorMensaje.setText(I18N.texto("conductor.error.licenciaVacia"));
                 return;
             }
-            Usuario nuevo = new Usuario(TextoNombre.getText(), TextoTelefono.getText(), email);
-            
-         // Guardamos temporalmente los datos
-            contexto.setUsuarioPendiente(nuevo);
-            contexto.setLicenciaPendiente(TextoLicenciaConducir.getText().trim());
-			}
-
-    
-         // Pasamos a registrar el vehículo
+            Usuario existente = sistema.buscarPorEmail(email);
+            if (existente != null && existente.getConductor() != null) {
+                errorMensaje.setText(I18N.texto("conductor.error.yaExiste"));
+                return;
+            }
+            // si ya es cliente se reutiliza ese usuario si no se crea uno nuevo
+            Usuario pendiente = (existente != null) ? existente
+                    : new Usuario(TextoNombre.getText(), TextoTelefono.getText(), email);
+            contexto.setUsuarioPendiente(pendiente);
+            contexto.setLicenciaPendiente(licencia);
             navegador.irA("/vistas/Vehiculo.fxml");
-            
-          } catch (IllegalArgumentException e) {
+        } catch (IllegalArgumentException e) {
             errorMensaje.setText(e.getMessage());
         }
-        
     }
+    
     
 }

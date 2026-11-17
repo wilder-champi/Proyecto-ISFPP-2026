@@ -5,7 +5,6 @@
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.TableColumn?>
 <?import javafx.scene.control.TableView?>
-<?import javafx.scene.control.TextField?>
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.layout.ColumnConstraints?>
 <?import javafx.scene.layout.GridPane?>
@@ -17,7 +16,7 @@
 <AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="616.0" prefWidth="1144.0" xmlns="http://javafx.com/javafx/26" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controladores.CotizacionViajeControlador">
 
    <children>
-      <GridPane layoutX="27.0" layoutY="49.0" prefHeight="299.0" prefWidth="297.0">
+      <GridPane layoutX="27.0" layoutY="49.0" prefHeight="187.0" prefWidth="297.0">
         <columnConstraints>
             <ColumnConstraints hgrow="SOMETIMES" maxWidth="120.33334350585938" minWidth="10.0" prefWidth="104.66666666666667" />
             <ColumnConstraints hgrow="SOMETIMES" maxWidth="163.33333333333331" minWidth="10.0" prefWidth="153.33333333333331" />
@@ -30,31 +29,20 @@
             <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
             <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
             <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-            <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-            <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-            <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
         </rowConstraints>
          <children>
-            <Label text="%cotizacion.latOrigen" />
-            <Label text="%cotizacion.latDestino" GridPane.rowIndex="1" />
-            <Label text="%cotizacion.vehiculo" GridPane.rowIndex="5" />
-            <Label text="%cotizacion.categoria" GridPane.rowIndex="6" />
-            <Label text="%cotizacion.lonOrigen" GridPane.rowIndex="2" />
-            <Label text="%cotizacion.lonDestino" GridPane.rowIndex="3" />
-            <Label prefHeight="18.0" prefWidth="120.0" text="%cotizacion.viajePara" GridPane.rowIndex="7" />
-            <TextField fx:id="TextoLatOrigen" promptText="-42.77" GridPane.columnIndex="1" />
-            <TextField fx:id="TextoLatDestino" promptText="-42.75" GridPane.columnIndex="1" GridPane.rowIndex="1" />
-            <TextField fx:id="TextoLonOrigen" promptText="-65.03" GridPane.columnIndex="1" GridPane.rowIndex="2" />
-            <TextField fx:id="TextoLonDestino" promptText="-65.00" GridPane.columnIndex="1" GridPane.rowIndex="3" />
-            <ComboBox fx:id="cmbVehiculo" prefHeight="25.0" prefWidth="156.0" promptText="%cotizacion.seleccionarVehiculo" GridPane.columnIndex="1" GridPane.rowIndex="5" />
-            <ComboBox fx:id="cmbCategoria" prefHeight="25.0" prefWidth="159.0" promptText="%cotizacion.seleccionarCategoria" GridPane.columnIndex="1" GridPane.rowIndex="6" />
-            <ComboBox fx:id="cmbServicio" prefHeight="28.0" prefWidth="172.0" promptText="%cotizacion.seleccionarServicio" GridPane.columnIndex="1" GridPane.rowIndex="7" />
+            <Label text="%cotizacion.vehiculo" GridPane.rowIndex="1" />
+            <Label text="%cotizacion.categoria" GridPane.rowIndex="3" />
+            <Label prefHeight="18.0" prefWidth="120.0" text="%cotizacion.viajePara" GridPane.rowIndex="5" />
+            <ComboBox fx:id="cmbVehiculo" prefHeight="25.0" prefWidth="156.0" promptText="%cotizacion.seleccionarVehiculo" GridPane.columnIndex="1" GridPane.rowIndex="1" />
+            <ComboBox fx:id="cmbCategoria" prefHeight="25.0" prefWidth="159.0" promptText="%cotizacion.seleccionarCategoria" GridPane.columnIndex="1" GridPane.rowIndex="3" />
+            <ComboBox fx:id="cmbServicio" prefHeight="28.0" prefWidth="172.0" promptText="%cotizacion.seleccionarServicio" GridPane.columnIndex="1" GridPane.rowIndex="5" />
          </children>
       </GridPane>
 
-      <Label fx:id="mensajel" layoutX="23.0" layoutY="403.0" prefHeight="18.0" prefWidth="1.0" />
+      <Label fx:id="mensajel" layoutX="23.0" layoutY="320.0" prefHeight="35.0" prefWidth="13.0" />
 
-      <HBox layoutX="24.0" layoutY="373.0" prefHeight="39.0" prefWidth="190.0" spacing="10.0">
+      <HBox layoutX="23.0" layoutY="268.0" prefHeight="39.0" prefWidth="190.0" spacing="10.0">
          <children>
             <Button mnemonicParsing="false" onAction="#onCotizar" text="%cotizacion.cotizar" />
             <Button mnemonicParsing="false" onAction="#onLimpiar" text="%cotizacion.limpiar" />
@@ -62,7 +50,7 @@
          </children>
       </HBox>
 
-      <TableView fx:id="tblAlternativas" layoutX="23.0" layoutY="463.0" prefHeight="148.0" prefWidth="480.0">
+      <TableView fx:id="tblAlternativas" layoutX="23.0" layoutY="416.0" prefHeight="195.0" prefWidth="480.0">
          <columns>
             <TableColumn fx:id="colServicio" prefWidth="145.0" text="%cotizacion.colServicio" />
             <TableColumn fx:id="colPrecio" prefWidth="175.0" text="%cotizacion.colPrecio" />
@@ -76,14 +64,15 @@
          </font>
       </Label>
 
-      <Button layoutX="214.0" layoutY="373.0" mnemonicParsing="false" onAction="#onSolicitar" text="%cotizacion.solicitar" />
+      <Button layoutX="223.0" layoutY="268.0" mnemonicParsing="false" onAction="#onSolicitar" text="%cotizacion.solicitar" />
 
       <WebView fx:id="mapaWeb" layoutX="503.0" layoutY="20.0" prefHeight="528.0" prefWidth="620.0" />
 
-      <Button layoutX="373.0" layoutY="66.0" mnemonicParsing="false" onAction="#onMarcarOrigenMapa" text="%cotizacion.marcarOrigen" />
+      <Button layoutX="373.0" layoutY="66.0" mnemonicParsing="false" onAction="#onMarcarOrigenMapa" prefHeight="25.0" prefWidth="129.0" text="%cotizacion.marcarOrigen" />
 
-      <Button layoutX="375.0" layoutY="105.0" mnemonicParsing="false" onAction="#onMarcarDestinoMapa" text="%cotizacion.marcarDestino" />
+      <Button layoutX="375.0" layoutY="105.0" mnemonicParsing="false" onAction="#onMarcarDestinoMapa" prefHeight="25.0" prefWidth="129.0" text="%cotizacion.marcarDestino" />
       <ComboBox fx:id="cmbCalificacion" layoutX="375.0" layoutY="152.0" onAction="#onCalificar" prefHeight="25.0" prefWidth="129.0" promptText="calificacionViaje" />
+      <Button layoutX="388.0" layoutY="343.0" mnemonicParsing="false" onAction="#onCancelarViaje" text="cancelar" />
 
    </children>
 </AnchorPane>

@@ -25,6 +25,9 @@ public final class OperacionesViaje {
 		if (!esCliente && !esConductor) {
 			throw new IllegalArgumentException("el usuario no pertenece al viaje");
 		}
+		if (esConductor && (motivo == null || motivo.isBlank())) {
+			throw new IllegalArgumentException("Tenés que indicar el motivo de la cancelacion");
+		}
 		// el costo se calcula antes de cancelar, mientras el viaje sigue aceptado o iniciado
 		double costo = 0.0;
 		if (esCliente) {

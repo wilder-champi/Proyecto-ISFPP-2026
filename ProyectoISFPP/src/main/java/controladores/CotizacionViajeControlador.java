@@ -13,12 +13,12 @@ import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
-import javafx.scene.control.TextField;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.web.WebEngine;
 import javafx.scene.web.WebView;
 import logica.Alternativa;
 import logica.Cotizador;
+import logica.OperacionesViaje;
 import modelo.CalificacionViaje;
 import modelo.CategoriaVehiculo;
 import modelo.EstadoViaje;
@@ -30,7 +30,7 @@ import netscape.javascript.JSObject;
 
 /**
  * Controlador de la pantalla donde el cliente cotiza y solicita viajes. Permite cargar el origen y el destino
- * (escribiendo las coordenadas o marcándolas en el mapa), ver las alternativas con su costo y solicitar una.
+ * (marcándolos en el mapa), ver las alternativas con su costo y solicitar una.
  */
 public class CotizacionViajeControlador implements Controlador {
 
@@ -38,17 +38,9 @@ public class CotizacionViajeControlador implements Controlador {
 	private Contexto contexto;
 	private Cotizador cotizador;
 
-	@FXML
-	private TextField TextoLatDestino;
-
-	@FXML
-	private TextField TextoLatOrigen;
-
-	@FXML
-	private TextField TextoLonDestino;
-
-	@FXML
-	private TextField TextoLonOrigen;
+	// puntos marcados en el mapa (reemplazan a los campos de coordenadas)
+	private Ubicacion puntoOrigen;
+	private Ubicacion puntoDestino;
 
 	@FXML
 	private ComboBox<TipoVehiculo> cmbVehiculo;
@@ -134,8 +126,12 @@ public class CotizacionViajeControlador implements Controlador {
 	void onCotizar(ActionEvent event) {
 		mensajel.setText("");
 		try {
-			Ubicacion origen = new Ubicacion(leer(TextoLatOrigen), leer(TextoLonOrigen));
-			Ubicacion destino = new Ubicacion(leer(TextoLatDestino), leer(TextoLonDestino));
+			if (puntoOrigen == null || puntoDestino == null) {
+				mensajel.setText(I18N.texto("cotizacion.error.marcarPuntos"));
+				return;
+			}
+			Ubicacion origen = puntoOrigen;
+			Ubicacion destino = puntoDestino;
 
 			if (cmbServicio.getValue() == null || cmbCategoria.getValue() == null) {
 				mensajel.setText(I18N.texto("cotizacion.error.seleccion"));
@@ -173,8 +169,12 @@ public class CotizacionViajeControlador implements Controlador {
 			return;
 		}
 		try {
-			Ubicacion origen = new Ubicacion(leer(TextoLatOrigen), leer(TextoLonOrigen));
-			Ubicacion destino = new Ubicacion(leer(TextoLatDestino), leer(TextoLonDestino));
+			if (puntoOrigen == null || puntoDestino == null) {
+				mensajel.setText(I18N.texto("cotizacion.error.marcarPuntos"));
+				return;
+			}
+			Ubicacion origen = puntoOrigen;
+			Ubicacion destino = puntoDestino;
 
 			Viaje viaje = new Viaje(contexto.getUsuarioActual(), origen, destino, fila.getAlternativa().getServicio());
 			viaje.solicitar(LocalDateTime.now());
@@ -188,31 +188,14 @@ public class CotizacionViajeControlador implements Controlador {
 	}
 
 	/**
-	 * Lee una coordenada escrita en un campo de texto.
-	 *
-	 * @param campo campo de texto con la coordenada
-	 * @return la coordenada como número
-	 * @throws IllegalArgumentException si el texto no es un número
-	 */
-	private double leer(TextField campo) {
-		try {
-			return Double.parseDouble(campo.getText().trim());
-		} catch (NumberFormatException e) {
-			throw new IllegalArgumentException("cotizacion.error.coordenadas");
-		}
-	}
-
-	/**
 	 * Limpia los campos, los selectores, la tabla, el mensaje y los marcadores del mapa.
 	 *
 	 * @param event evento del botón de limpiar
 	 */
 	@FXML
 	void onLimpiar(ActionEvent event) {
-		TextoLatOrigen.clear();
-		TextoLonOrigen.clear();
-		TextoLatDestino.clear();
-		TextoLonDestino.clear();
+		puntoOrigen = null;
+		puntoDestino = null;
 		cmbVehiculo.setValue(null);
 		cmbServicio.setValue(null);
 		cmbCategoria.setValue(null);
@@ -279,7 +262,7 @@ public class CotizacionViajeControlador implements Controlador {
 	 */
 	public class PuenteMapa {
 		/**
-		 * Completa los campos de latitud y longitud del origen o del destino con el punto marcado en el mapa.
+		 * Guarda el origen o el destino con el punto marcado en el mapa.
 		 *
 		 * @param tipo {@code "origen"} o {@code "destino"}
 		 * @param lat latitud del punto marcado
@@ -287,11 +270,9 @@ public class CotizacionViajeControlador implements Controlador {
 		 */
 		public void seleccionarPunto(String tipo, double lat, double lon) {
 			if ("origen".equals(tipo)) {
-				TextoLatOrigen.setText(String.valueOf(lat));
-				TextoLonOrigen.setText(String.valueOf(lon));
+				puntoOrigen = new Ubicacion(lat, lon);
 			} else if ("destino".equals(tipo)) {
-				TextoLatDestino.setText(String.valueOf(lat));
-				TextoLonDestino.setText(String.valueOf(lon));
+				puntoDestino = new Ubicacion(lat, lon);
 			}
 		}
 	}
@@ -301,7 +282,7 @@ public class CotizacionViajeControlador implements Controlador {
 	    List<Viaje> viajes = contexto.getUsuarioActual().getCliente().getViajes();
 
 	    if (viajes.isEmpty()) {
-	        return null; // el cliente todavía no hizo ningún viaje
+	        return null; // el cliente todavia no hizo ningun viaje
 	    }
 
 	    int posicionUltimo = viajes.size() - 1;
@@ -319,6 +300,29 @@ public class CotizacionViajeControlador implements Controlador {
 	    }
 	    viaje.finalizar(LocalDateTime.now(), CalificacionViaje.NO_CALIFICADO, nota);
 	    cmbCalificacion.setValue(null);
+	}
+	
+	
+	@FXML
+	void onCancelarViaje(ActionEvent event) {
+		mensajel.setText("");
+		Viaje viaje = ultimoViaje();
+		if (viaje == null || !contexto.getUsuarioActual().getCliente().enViaje()) {
+			mensajel.setText("No tenés ningún viaje para cancelar.");
+			return;
+		}
+		try {
+			double costo = OperacionesViaje.cancelar(viaje, contexto.getUsuarioActual(),
+					"Cancelado por el cliente", LocalDateTime.now());
+			contexto.getSistema().removerViajePendiente(viaje);
+			if (costo > 0) {
+				mensajel.setText("Viaje cancelado. Costo de la cancelación: $" + String.format("%.2f", costo));
+			} else {
+				mensajel.setText("Viaje cancelado. No genera ningún costo.");
+			}
+		} catch (IllegalStateException | IllegalArgumentException e) {
+			mensajel.setText(e.getMessage());
+		}
 	}
 	
 

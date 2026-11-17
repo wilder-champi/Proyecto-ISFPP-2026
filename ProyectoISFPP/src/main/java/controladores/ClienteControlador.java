@@ -1,11 +1,12 @@
 package controladores;
 
-import javafx.scene.control.Label;
 import internacionalizacion.I18N;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
+import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import logica.SistemaGuardado;
+import modelo.RolUsuario;
 import modelo.Usuario;
 
 
@@ -88,6 +89,9 @@ public class ClienteControlador implements Controlador {
      * @param usu usuario que ingresa
      */
     private void entrar(Usuario usu) {
+    	if (usu.getRolActivo() != RolUsuario.CLIENTE) {
+    		usu.cambiarRolActivo(RolUsuario.CLIENTE);
+    	}
     	contexto.setUsuarioActual(usu);//aca a contexto le decimos cual es el nuevo usuario actual
     	navegador.irA("/vistas/CotizacionViaje.fxml");//y  con navegador vamos ala siguiente vista 
     }

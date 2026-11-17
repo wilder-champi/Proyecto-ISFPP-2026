@@ -323,18 +323,54 @@ public class SistemaGuardado {
 			throw new IllegalArgumentException("la patente " + vehiculo.getPatente() + " ya esta registrada");
 		}
 
-		// armo todos los usuarios, con la patente nueva en el que corresponde
+		// armo todos los usuarios con la patente nueva en el que corresponde
 		List<UsuarioDTO> dtos = new ArrayList<>();
 		for (Usuario u : usuarios) {
-			dtos.add(u == usuario ? creeDTO(u, vehiculo) : creeDTO(u));
+			if (u == usuario) {
+				dtos.add(creeDTO(u, vehiculo));
+			} else {
+				dtos.add(creeDTO(u));
+			}
 		}
 
-		// primero se guardan los datos y recién si salió bien se cambia la memoria
+		// primero se guardan los datos y recien si salio bien se cambia la memoria
 		fabrica.getVehiculoDAO().guardar(creeDTO(vehiculo));
 		fabrica.getUsuarioDAO().guardarTodos(dtos);
 
 		usuario.getConductor().agregarVehiculo(vehiculo);
 		vehiculos.put(vehiculo.getPatente(), vehiculo);
+	}
+	
+	
+	public void convertirEnConductor(Usuario usuario, String licencia, Vehiculo vehiculo) {
+	    if (usuario == null || !usuarios.contains(usuario)) {
+	        throw new IllegalArgumentException("el usuario no existe");
+	    }
+	    if (usuario.getConductor() != null) {
+	        throw new IllegalArgumentException("el usuario ya es conductor");
+	    }
+	    if (licencia == null || licencia.isBlank()) {
+	        throw new IllegalArgumentException("la licencia no puede estar vacia");
+	    }
+	    if (vehiculos.containsKey(vehiculo.getPatente())) {
+	        throw new IllegalArgumentException("la patente " + vehiculo.getPatente() + " ya esta registrada");
+	    }
+
+	    List<UsuarioDTO> dtos = new ArrayList<>();
+	    for (Usuario u : usuarios) {
+	        if (u == usuario) {
+	            dtos.add(new UsuarioDTO(u.getNombre(), u.getTelefono(), u.getEmail(),
+	                    licencia.trim(), new ArrayList<>(List.of(vehiculo.getPatente()))));
+	        } else {
+	            dtos.add(creeDTO(u));
+	        }
+	    }
+
+	    fabrica.getVehiculoDAO().guardar(creeDTO(vehiculo));
+	    fabrica.getUsuarioDAO().guardarTodos(dtos);
+
+	    usuario.altaConductor(licencia.trim(), vehiculo);
+	    vehiculos.put(vehiculo.getPatente(), vehiculo);
 	}
 
 	/**

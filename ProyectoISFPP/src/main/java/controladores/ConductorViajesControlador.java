@@ -3,6 +3,7 @@ package controladores;
 import java.net.URL;
 import java.time.LocalDateTime;
 import java.util.Locale;
+import java.util.Optional;
 
 import internacionalizacion.I18N;
 import javafx.concurrent.Worker;
@@ -13,10 +14,12 @@ import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
+import javafx.scene.control.TextInputDialog;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.web.WebEngine;
 import javafx.scene.web.WebView;
 import logica.OperacionesConductor;
+import logica.OperacionesViaje;
 import modelo.CalificacionViaje;
 import modelo.Conductor;
 import modelo.EstadoConductor;
@@ -396,6 +399,31 @@ public class ConductorViajesControlador implements Controlador {
                 cmbCalificacion.getItems().add(c);
             }
         }
+    }
+    
+    
+    @FXML
+    void onCancelarViaje(ActionEvent event) {
+    	mensajel.setText("");
+    	Viaje viaje = viajeActivo();
+    	if (viaje == null) {
+    		mensajel.setText("No tenés un viaje aceptado o iniciado para cancelar.");
+    		return;
+    	}
+    	TextInputDialog dialogo = new TextInputDialog();
+    	dialogo.setTitle("Cancelar viaje");
+    	dialogo.setHeaderText("Indicá el motivo de la cancelación");
+    	Optional<String> motivo = dialogo.showAndWait();
+    	if (motivo.isEmpty()) {
+    		return;//CIERRO EL DIALOGO NO SE CANCELA	
+    	}
+    	try {
+    		OperacionesViaje.cancelar(viaje, contexto.getUsuarioActual(), motivo.get(), LocalDateTime.now());
+    		mostrarEstado();
+    		mensajel.setText("Viaje cancelado. Quedás disponible.");
+    	} catch (IllegalStateException | IllegalArgumentException e) {
+    		mensajel.setText(e.getMessage());
+    	}
     }
 
     

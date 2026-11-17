@@ -91,11 +91,13 @@ public class VehiculoControlador implements Controlador {
      */
     private boolean esRegistroNuevo() {
 		return contexto.getUsuarioPendiente() != null;
+		
 	}
 
     /**
-     * Crea el vehículo con los datos ingresados y lo registra: junto con el conductor nuevo, o agregado
-     * a un conductor existente. Muestra un error si falta alguna selección o los datos no son válidos.
+     * Crea el vehículo con los datos ingresados y lo registra: junto con el conductor nuevo, como
+     * conductor a partir de un cliente que ya existe, o agregado a un conductor existente. Muestra
+     * un error si falta alguna selección o los datos no son válidos.
      *
      * @param event evento del botón de finalizar registro
      */
@@ -114,16 +116,22 @@ public class VehiculoControlador implements Controlador {
 					cmbTipoServicio.getValue());
 
 			if (esRegistroNuevo()) {
-				// conductor nuevo: se crea con su licencia y este vehículo
-				Usuario nuevo = contexto.getUsuarioPendiente();
-				nuevo.altaConductor(contexto.getLicenciaPendiente(), vehiculo);
-				sistema.registrarUsuario(nuevo);
+				Usuario pendiente = contexto.getUsuarioPendiente();
 
-				contexto.setUsuarioActual(nuevo);
+				if (sistema.buscarPorEmail(pendiente.getEmail()) != null) {
+					// ya era cliente: pasa a ser tambien conductor
+					sistema.convertirEnConductor(pendiente, contexto.getLicenciaPendiente(), vehiculo);
+				} else {
+					// conductor nuevo se crea con su licencia y este vehiculo
+					pendiente.altaConductor(contexto.getLicenciaPendiente(), vehiculo);
+					sistema.registrarUsuario(pendiente);
+				}
+
+				contexto.setUsuarioActual(pendiente);
 				contexto.setVehiculoActual(vehiculo);
 				contexto.limpiarRegistroPendiente();
 			} else {
-				// conductor existente: se le suma el vehículo
+				// conductor existente se le suma el vehiculo
 				sistema.agregarVehiculoAConductor(contexto.getUsuarioActual(), vehiculo);
 			}
 
