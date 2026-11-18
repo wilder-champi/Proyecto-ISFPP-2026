@@ -6,6 +6,7 @@ import javafx.fxml.FXML;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import logica.SistemaGuardado;
+import logica.ValidadorUsuario;
 import modelo.RolUsuario;
 import modelo.Usuario;
 
@@ -74,8 +75,7 @@ public class ClienteControlador implements Controlador {
     			errorMensaje.setText(I18N.texto("cliente.error.yaExiste"));
         		return;
     		}
-    		Usuario nuevo = new Usuario(TextoNombre.getText(), TextoTelefono.getText(), TextoMail.getText());//se crea un usuario leyenco la informacion ingresada en los "TextField"
-    		sistema.registrarUsuario(nuevo);//registamos el usuario
+    		Usuario nuevo = ValidadorUsuario.crear(TextoNombre.getText(), TextoTelefono.getText(), TextoMail.getText());    		sistema.registrarUsuario(nuevo);//registamos el usuario
     		entrar(nuevo);//una vez creado y registrado le pasamos el usuario al metodo de ayuda para que lo haga entrar
     	}catch(IllegalArgumentException | UnsupportedOperationException e){//atrapamos la excepcion por si este no se pudo crear por un x motivo
 			errorMensaje.setText(e.getMessage());

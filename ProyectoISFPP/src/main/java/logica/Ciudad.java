@@ -25,4 +25,21 @@ public final class Ciudad {
             throw new IllegalStateException("Valor inválido o faltante: " + clave, e);
         }
     }
+    
+    public static GeneradorUbicacion cargarGeneradorCiudadConfigurado() {
+        // abre y lee config.properties
+        Properties config = new Properties();
+        try (FileInputStream entrada = new FileInputStream("config.properties")) {
+            config.load(entrada);
+        } catch (IOException e) {
+            throw new IllegalStateException("No se pudo leer config.properties", e);
+        }
+
+        // busca el valor de la clave
+        String archivo = config.getProperty("ciudad","PuertoMadryn.properties").trim();
+
+        return cargarGenerador(archivo);
+    }
+    
+    
 }

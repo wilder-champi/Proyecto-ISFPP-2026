@@ -6,6 +6,7 @@ import javafx.fxml.FXML;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import logica.SistemaGuardado;
+import logica.ValidadorUsuario;
 import modelo.RolUsuario;
 import modelo.Usuario;
 
@@ -124,8 +125,12 @@ public class ConductorControlador implements Controlador {
                 return;
             }
             // si ya es cliente se reutiliza ese usuario si no se crea uno nuevo
-            Usuario pendiente = (existente != null) ? existente
-                    : new Usuario(TextoNombre.getText(), TextoTelefono.getText(), email);
+            Usuario pendiente;
+            if (existente != null) {
+                pendiente = existente;
+            } else {
+                pendiente = ValidadorUsuario.crear(TextoNombre.getText(), TextoTelefono.getText(), email);
+            }
             contexto.setUsuarioPendiente(pendiente);
             contexto.setLicenciaPendiente(licencia);
             navegador.irA("/vistas/Vehiculo.fxml");

@@ -1,5 +1,7 @@
 package controladores;
 
+import java.util.List;
+
 import internacionalizacion.I18N;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -7,6 +9,8 @@ import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import logica.SistemaGuardado;
+import logica.ValidadorUsuario;
+import logica.ValidadorVehiculo;
 import modelo.CategoriaVehiculo;
 import modelo.TipoServicio;
 import modelo.TipoVehiculo;
@@ -111,9 +115,9 @@ public class VehiculoControlador implements Controlador {
 				return;
 			}
 
-			Vehiculo vehiculo = new Vehiculo(TextoPatente.getText().trim(), TextoModelo.getText().trim(),
-					leerCapacidad(), cmbTipoVehiculo.getValue(), cmbCategoria.getValue(),
-					cmbTipoServicio.getValue());
+			Vehiculo vehiculo = ValidadorVehiculo.crear(TextoPatente.getText(), TextoModelo.getText(),
+			        leerCapacidad(), cmbTipoVehiculo.getValue(), cmbCategoria.getValue(),
+			        List.of(cmbTipoServicio.getValue()));
 
 			if (esRegistroNuevo()) {
 				Usuario pendiente = contexto.getUsuarioPendiente();
@@ -123,7 +127,7 @@ public class VehiculoControlador implements Controlador {
 					sistema.convertirEnConductor(pendiente, contexto.getLicenciaPendiente(), vehiculo);
 				} else {
 					// conductor nuevo se crea con su licencia y este vehiculo
-					pendiente.altaConductor(contexto.getLicenciaPendiente(), vehiculo);
+					ValidadorUsuario.altaConductor(pendiente, contexto.getLicenciaPendiente(), vehiculo);
 					sistema.registrarUsuario(pendiente);
 				}
 

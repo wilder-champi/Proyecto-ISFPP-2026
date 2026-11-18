@@ -49,7 +49,7 @@ public class SistemaGuardado {
 	public SistemaGuardado(DAOFactory fabrica) {
 		this.fabrica = fabrica;
 		
-		this.generadorUbicacion = Ciudad.cargarGenerador("ciudad.properties");
+		this.generadorUbicacion = Ciudad.cargarGeneradorCiudadConfigurado();
 		
 		this.viajesPendientes = new ArrayList<>();
 
@@ -158,25 +158,6 @@ public class SistemaGuardado {
 	public List<Usuario> getUsuarios() {
 		return usuarios;
 	}
-	/*
-	// Pasa los usuarios del modelo a DTO y le pide al DAO que los escriba
-	public void guardarUsuarios() {
-		List<UsuarioDTO> dtos = new ArrayList<>();
-
-		for (Usuario u : usuarios) {
-			String licencia = null;
-			List<String> patentes = new ArrayList<>();
-
-			if (u.getConductor() != null) {
-				licencia = u.getConductor().getLicenciaConducir();
-				for (Vehiculo v : u.getConductor().getVehiculos()) {
-					patentes.add(v.getPatente());
-				}
-			}
-			dtos.add(new UsuarioDTO(u.getNombre(), u.getTelefono(), u.getEmail(), licencia, patentes));
-		}
-		fabrica.getUsuarioDAO().guardarTodos(dtos);
-	}*/
 
 	/**
 	 * Registra un usuario nuevo y, si es conductor, también sus vehículos. Primero se guardan los vehículos
