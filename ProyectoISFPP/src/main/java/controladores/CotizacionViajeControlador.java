@@ -268,12 +268,17 @@ public class CotizacionViajeControlador implements Controlador {
 		 * @param lat latitud del punto marcado
 		 * @param lon longitud del punto marcado
 		 */
-		public void seleccionarPunto(String tipo, double lat, double lon) {
-			if ("origen".equals(tipo)) {
-				puntoOrigen = new Ubicacion(lat, lon);
-			} else if ("destino".equals(tipo)) {
-				puntoDestino = new Ubicacion(lat, lon);
-			}
+		public boolean seleccionarPunto(String tipo, double lat, double lon) {
+		    Ubicacion punto = new Ubicacion(lat, lon);
+		    if (!contexto.getSistema().getGeneradorUbicacion().contiene(punto)) {
+		        return false;               // fuera de la ciudad, no se guarda
+		    }
+		    if ("origen".equals(tipo)) {
+		        puntoOrigen = punto;
+		    } else if ("destino".equals(tipo)) {
+		        puntoDestino = punto;
+		    }
+		    return true;
 		}
 	}
 	

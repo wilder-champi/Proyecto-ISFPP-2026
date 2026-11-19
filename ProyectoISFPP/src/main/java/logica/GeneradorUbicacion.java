@@ -83,6 +83,12 @@ public class GeneradorUbicacion {
 		return resultado;//retorna la nueva cordenada latitud/longitud
 	}
 	
+	
+	public boolean contiene(Ubicacion u) {
+	    return u.getLatitud()  >= latitudMinima  && u.getLatitud()  <= latitudMaxima
+	        && u.getLongitud() >= longitudMinima && u.getLongitud() <= longitudMaxima;
+	}
+	
 	public double getLatitudMinima()  {
 		return latitudMinima; 
 	}

@@ -179,8 +179,11 @@
         var lat = datos.waypoints[0].location[1];
 
         // se manda a Java el punto ya "pegado" a la calle
-        window.javaBridge.seleccionarPunto(tipo, lat, lon);
-
+		var valido = window.javaBridge.seleccionarPunto(tipo, lat, lon);
+		if (!valido) {
+		  aviso('Ese punto está fuera de la ciudad');
+		  return;   // el modo de selección sigue activo
+		}
         if (marcadores[tipo]) map.removeLayer(marcadores[tipo]);
         marcadores[tipo] = L.marker([lat, lon]).addTo(map);
 

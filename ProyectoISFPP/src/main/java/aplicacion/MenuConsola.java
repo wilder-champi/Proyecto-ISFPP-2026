@@ -108,22 +108,6 @@ public class MenuConsola {
 			interfazConsola.mostrarError(e.getMessage());
 		}
 		
-		/*	Esto guardaba los usuarios en memoria
-		for (int i = 0; i < sistema.getUsuarios().size(); i++) {
-			Usuario u = sistema.getUsuarios().get(i);
-			//Verifico si este usuario esta en la lista
-			//equalsIgnoreCase() Distinge en mayusculas
-			if(email.equalsIgnoreCase(u.getEmail()) ) {
-				interfazConsola.mostrarError("Este usuario ya existe!");
-				return;
-			}
-		}
-			
-		//Creo un nuevo usuario y lo cargo a la lista  
-		Usuario nuevoUsuario = new Usuario(nombre, telefono, email);
-		sistema.getUsuarios().add(nuevoUsuario);
-		interfazConsola.mostrarMensaje("Usuario Registrado Exitosamente.");
-		*/
 	}
 	
 	/**
@@ -145,25 +129,7 @@ public class MenuConsola {
 		interfazConsola.mostrarError("No se encontro ningun usuario con ese Email.");
 	}
 	
-/* Estos metodos los deje para el tema de hacer pruebas!! 
- * No borres nada wilder ojito!! // le quitas lp divertido a todo mano
-	private void listarUsuarios() {
-		for (int i = 0; i < sistema.getUsuarios().size(); i++) {
-			Usuario u = sistema.getUsuarios().get(i);
-			System.out.println((i + 1) + ". " + u.getNombre() + " (" + u.getEmail() + ")");
-		}
-	}
 
-	private void elegirUsuario() {
-		//listarUsuarios();
-		int num = leerEntero("Ingrese el numero de usuario (0 para volver): ");
-		if (num < 1 || num > sistema.getUsuarios().size()) {
-			return;
-		}
-		usuarioActual = sistema.getUsuarios().get(num - 1);
-		menuUsuario();
-	}
-*/
 
 	// ---------- MENU DEL USUARIO ----------
 
